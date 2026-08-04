@@ -5,6 +5,7 @@ pub mod compiler;
 pub mod config;
 pub mod error;
 pub mod logging;
+pub mod routing;
 
 use std::path::PathBuf;
 

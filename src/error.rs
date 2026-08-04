@@ -56,6 +56,24 @@ pub enum AppError {
         input: std::path::PathBuf,
         output: std::path::PathBuf,
     },
+    #[error("invalid route from {input} ({candidate}): {reason}")]
+    InvalidRoute {
+        input: std::path::PathBuf,
+        candidate: String,
+        reason: &'static str,
+    },
+    #[error("route collision at {route}: {first} and {second}")]
+    RouteCollision {
+        first: std::path::PathBuf,
+        second: std::path::PathBuf,
+        route: String,
+    },
+    #[error("static asset {asset} collides with generated page {page} at {output}")]
+    StaticAssetCollision {
+        page: std::path::PathBuf,
+        asset: std::path::PathBuf,
+        output: std::path::PathBuf,
+    },
 }
 
 impl AppError {
@@ -72,6 +90,9 @@ impl AppError {
             | Self::UnsupportedConfigVersion { .. }
             | Self::UnsafeOutputPath { .. }
             | Self::UnsafePathRelationship { .. } => ExitCode::from(4),
+            Self::InvalidRoute { .. }
+            | Self::RouteCollision { .. }
+            | Self::StaticAssetCollision { .. } => ExitCode::from(4),
         }
     }
 
@@ -88,6 +109,9 @@ impl AppError {
             Self::UnsupportedConfigVersion { .. } => "E403",
             Self::UnsafeOutputPath { .. } => "E404",
             Self::UnsafePathRelationship { .. } => "E405",
+            Self::InvalidRoute { .. } => "E501",
+            Self::RouteCollision { .. } => "E502",
+            Self::StaticAssetCollision { .. } => "E503",
         }
     }
 }
