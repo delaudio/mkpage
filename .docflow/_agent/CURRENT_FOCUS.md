@@ -5,7 +5,7 @@
 - **Branch:** main
 - **Active item:** 0012 — define semantic TUI widgets
 - **Blockers:** none.
-- **Uncommitted work:** Issue #12 ADR and plan.
+- **Uncommitted work:** Branch review follow-up for item 0012 and ship records after publish.
 
 ## Last shipped
 
@@ -13,4 +13,4 @@
 
 ## Next item
 
-Implement the semantic widget contract and macros.
+Clear review findings, publish item 0012, and close issue #12 before moving to the next queued item.

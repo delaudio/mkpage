@@ -15,3 +15,6 @@ Append one row per commit. Newest entries go at the bottom.
 | 2026-08-04 | e2dc3be | main | 0009 | Published JSON data and collections; CI passed on Linux, macOS, and Windows. |
 | 2026-08-04 | f0402e9 | main | 0010 | Published Node-free static assets; CI passed on Linux, macOS, and Windows. |
 | 2026-08-04 | 9dfd568 | main | 0011 | Published planned builds, manifests, safe cleanup, and CLI reporting; CI passed on Linux, macOS, and Windows. |
+| 2026-08-04 | 125343e | main | 0012 | Proposed the semantic widget contract ADR, queued the implementation plan, and drafted the public widget contract. |
+| 2026-08-04 | 3fa5fb3 | main | 0012 | Accepted the semantic widget contract ADR and refreshed the decision index for implementation. |
+| 2026-08-04 | c69db50 | main | 0012 | Implemented semantic widget macros, examples, and full-layout coverage pending final ship/push. |

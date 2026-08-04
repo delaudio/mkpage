@@ -3,7 +3,7 @@
 <div class="mk-screen">{% if title %}<header class="mk-screen__title"><h1>{{ title }}</h1></header>{% endif %}{{ caller() }}{% if status %}<footer class="mk-screen__status" aria-label="Status">{{ status }}</footer>{% endif %}</div>
 {%- endmacro %}
 {% macro pane(title='', label='') -%}
-<section class="mk-pane"{% if label %} aria-label="{{ label }}"{% endif %}>{% if title %}<h2>{{ title }}</h2>{% endif %}{{ caller() }}</section>
+<section class="mk-pane"{% if label and not title %} aria-label="{{ label }}"{% endif %}>{% if title %}<h2>{{ title }}</h2>{% endif %}{{ caller() }}</section>
 {%- endmacro %}
 {% macro stack() -%}<div class="mk-stack">{{ caller() }}</div>{%- endmacro %}
 {% macro split() -%}<div class="mk-split">{{ caller() }}</div>{%- endmacro %}
