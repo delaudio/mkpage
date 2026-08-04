@@ -1,0 +1,16 @@
+[package]
+name = "mkpage"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+description = "A static-site generator for terminal-minded websites"
+license = "MIT"
+repository = "https://github.com/delaudio/mkpage"
+keywords = ["static-site-generator", "tui", "cli", "rust"]
+categories = ["command-line-utilities", "web-programming"]
+
+[dependencies]
+clap = { version = "4.5", features = ["derive"] }
+thiserror = "2.0"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
