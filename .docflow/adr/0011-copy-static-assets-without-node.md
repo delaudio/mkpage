@@ -1,7 +1,7 @@
 ---
 adr: 0011
 title: Copy static assets without Node
-status: Accepted
+status: Implemented
 date: 2026-08-04
 owner: default-agent
 depends-on: [adr/0005-define-project-discovery-and-configuration.md, adr/0006-define-safe-content-routing.md]
@@ -49,6 +49,7 @@ under `static/css/` as the Node-free v0.1 workflow.
 | Date | Revision | Author | Change |
 |---|---|---|---|
 | 2026-08-04 | r1 | default-agent | Accepted Node-free static asset contract. |
+| 2026-08-04 | r2 | default-agent | Implemented and shipped Node-free static assets. |
 
 ## Approvals
 

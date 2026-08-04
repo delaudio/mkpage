@@ -21,3 +21,9 @@ tests, and build integration.
 ## GitHub issue
 
 - https://github.com/delaudio/mkpage/issues/10
+
+## Shipped
+
+Shipped at HEAD `f0402e9347b5c61af195e6701db363e14ea5d0aa` after local format,
+Clippy, test, and release-build gates plus green GitHub Actions on Linux,
+macOS, and Windows.
