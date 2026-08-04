@@ -37,7 +37,10 @@ fn malformed_fixture_reports_code_message_and_source_path() {
 
     assert_eq!(error.code(), "E301");
     assert!(error.to_string().contains("reserved !invalid! marker"));
-    assert!(error.to_string().contains("content/index.md"));
+    let AppError::InvalidFixture { path, .. } = error else {
+        panic!("malformed fixture must retain its source path");
+    };
+    assert!(path.ends_with(std::path::Path::new("content").join("index.md")));
 }
 
 #[test]
