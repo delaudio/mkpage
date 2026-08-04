@@ -4,16 +4,17 @@ use std::{
     collections::BTreeSet,
     fs,
     path::{Component, Path, PathBuf},
+    time::Instant,
 };
 
 use crate::{
-    assets,
     error::{AppError, AppResult},
     markdown::render,
     page::{BuildProfile, parse},
     template::render as render_template,
 };
 use serde::Serialize;
+use sha2::{Digest, Sha256};
 
 const MANIFEST_FILE: &str = ".mkpage-manifest.json";
 const MANIFEST_VERSION: u32 = 1;
@@ -32,11 +33,14 @@ pub struct BuildReport {
     pub generated_files: Vec<PathBuf>,
     pub page_count: usize,
     pub asset_count: usize,
+    pub output_dir: PathBuf,
+    pub elapsed: std::time::Duration,
 }
 
 #[derive(Debug, Clone, Serialize, PartialEq, Eq)]
 struct OutputManifest {
     version: u32,
+    owner: &'static str,
     files: Vec<ManifestEntry>,
 }
 #[derive(Debug, Clone, Serialize, PartialEq, Eq)]
@@ -44,6 +48,7 @@ struct ManifestEntry {
     path: PathBuf,
     kind: &'static str,
     size: usize,
+    sha256: String,
 }
 
 /// Builds the minimal reference fixture into a deterministic HTML document.
@@ -51,6 +56,7 @@ struct ManifestEntry {
 /// This is intentionally narrow: routing, frontmatter, Markdown rendering,
 /// templates, and assets are introduced by their dedicated capabilities.
 pub fn build_site(request: &BuildRequest) -> AppResult<BuildReport> {
+    let started = Instant::now();
     validate_output_path(&request.source_dir, &request.output_dir)?;
 
     let source = request.source_dir.join("content").join("index.md");
@@ -71,29 +77,34 @@ pub fn build_site(request: &BuildRequest) -> AppResult<BuildReport> {
             generated_files: vec![],
             page_count: 0,
             asset_count: 0,
+            output_dir: request.output_dir.clone(),
+            elapsed: started.elapsed(),
         });
     }
 
     let asset_root = request.source_dir.join("static");
-    let mut asset_sources = collect_assets(&asset_root)?;
-    let mut occupied = BTreeSet::from([PathBuf::from("index.html")]);
+    let asset_sources = collect_assets(&asset_root)?;
+    let mut occupied = BTreeSet::from(["index.html".to_owned()]);
+    let mut planned_assets = Vec::new();
     for source in &asset_sources {
         let relative = source
             .strip_prefix(&asset_root)
             .expect("asset under root")
             .to_path_buf();
-        if !occupied.insert(relative.clone()) {
+        let key = relative.to_string_lossy().to_ascii_lowercase();
+        if !occupied.insert(key) {
             return Err(AppError::StaticAssetCollision {
                 page: request.output_dir.join(&relative),
                 asset: source.clone(),
                 output: request.output_dir.join(relative),
             });
         }
+        let bytes = fs::read(source).map_err(|error| AppError::SourceRead {
+            path: source.clone(),
+            message: error.to_string(),
+        })?;
+        planned_assets.push((relative, bytes));
     }
-    fs::create_dir_all(&request.output_dir).map_err(|error| AppError::OutputWrite {
-        path: request.output_dir.clone(),
-        message: error.to_string(),
-    })?;
 
     let output = request.output_dir.join("index.html");
     let rendered = render(&page.body);
@@ -107,17 +118,30 @@ pub fn build_site(request: &BuildRequest) -> AppResult<BuildReport> {
         None => render_reference_page(&rendered.html, request.profile.shows_draft_marker(&page)),
     };
     let document_bytes = document.into_bytes();
+    fs::create_dir_all(&request.output_dir).map_err(|error| AppError::OutputWrite {
+        path: request.output_dir.clone(),
+        message: error.to_string(),
+    })?;
     fs::write(&output, &document_bytes).map_err(|error| AppError::OutputWrite {
         path: output.clone(),
         message: error.to_string(),
     })?;
 
     let mut generated_files = vec![PathBuf::from("index.html")];
-    generated_files.extend(assets::copy(
-        &asset_root,
-        &request.output_dir,
-        std::slice::from_ref(&output),
-    )?);
+    for (relative, bytes) in planned_assets {
+        let destination = request.output_dir.join(&relative);
+        if let Some(parent) = destination.parent() {
+            fs::create_dir_all(parent).map_err(|error| AppError::OutputWrite {
+                path: parent.to_path_buf(),
+                message: error.to_string(),
+            })?;
+        }
+        fs::write(&destination, bytes).map_err(|error| AppError::OutputWrite {
+            path: destination,
+            message: error.to_string(),
+        })?;
+        generated_files.push(relative);
+    }
     generated_files.sort();
     remove_stale_managed(&request.output_dir, &generated_files)?;
     let mut manifest_files = Vec::new();
@@ -140,10 +164,17 @@ pub fn build_site(request: &BuildRequest) -> AppResult<BuildReport> {
                 "asset"
             },
             size,
+            sha256: sha256(&fs::read(request.output_dir.join(path)).map_err(|error| {
+                AppError::OutputWrite {
+                    path: request.output_dir.join(path),
+                    message: error.to_string(),
+                }
+            })?),
         });
     }
     let manifest = OutputManifest {
         version: MANIFEST_VERSION,
+        owner: "mkpage",
         files: manifest_files,
     };
     let mut manifest_bytes = serde_json::to_vec_pretty(&manifest).expect("manifest serialization");
@@ -155,12 +186,17 @@ pub fn build_site(request: &BuildRequest) -> AppResult<BuildReport> {
         }
     })?;
     let asset_count = asset_sources.len();
-    asset_sources.clear();
     Ok(BuildReport {
         generated_files,
         page_count: 1,
         asset_count,
+        output_dir: request.output_dir.clone(),
+        elapsed: started.elapsed(),
     })
+}
+
+fn sha256(bytes: &[u8]) -> String {
+    format!("{:x}", Sha256::digest(bytes))
 }
 
 fn collect_assets(root: &Path) -> AppResult<Vec<PathBuf>> {

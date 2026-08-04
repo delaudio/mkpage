@@ -17,6 +17,9 @@ fn minimal_fixture_matches_checked_in_output() {
         report.generated_files,
         vec![std::path::PathBuf::from("index.html")]
     );
+    assert_eq!(report.page_count, 1);
+    assert_eq!(report.asset_count, 0);
+    assert_eq!(report.output_dir, fixture.output);
     assert_golden_tree(&fixture.output, &fixture.golden);
 }
 

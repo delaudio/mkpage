@@ -63,8 +63,10 @@ pub mod init {
 pub mod build {
     use super::{
         CommandContext,
+        compiler::{BuildRequest, build_site},
         config::{ResolveOptions, resolve},
         error::{AppError, AppResult},
+        page::BuildProfile,
     };
     use std::env;
 
@@ -80,7 +82,21 @@ pub mod build {
             eprintln!("mkpage: project root: {}", project.root.display());
             eprintln!("mkpage: configuration: {}", project.config_path.display());
         }
-        Err(AppError::NotImplemented { command: "build" })
+        let report = build_site(&BuildRequest {
+            source_dir: project.root,
+            output_dir: project.paths.output,
+            profile: BuildProfile::production(time::OffsetDateTime::now_utc().date()),
+        })?;
+        if !context.quiet {
+            println!(
+                "mkpage: built {} page(s), {} asset(s) in {}ms → {}",
+                report.page_count,
+                report.asset_count,
+                report.elapsed.as_millis(),
+                report.output_dir.display()
+            );
+        }
+        Ok(())
     }
 }
 

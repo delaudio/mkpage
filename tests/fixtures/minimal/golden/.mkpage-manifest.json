@@ -1,10 +1,12 @@
 {
   "version": 1,
+  "owner": "mkpage",
   "files": [
     {
       "path": "index.html",
       "kind": "page",
-      "size": 179
+      "size": 179,
+      "sha256": "799e1945ea259195648a56f48233067d3ab26ccd82f99e0d0e1b75e516343f63"
     }
   ]
 }
