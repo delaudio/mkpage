@@ -22,3 +22,9 @@ profiles, diagnostics, build integration, tests, and author documentation.
 ## GitHub issue
 
 - https://github.com/delaudio/mkpage/issues/6
+
+## Shipped
+
+Shipped at HEAD `f441bb31ffda712f9d1666222acc6aa5f73fe600` after local format,
+Clippy, test, and release-build gates plus green GitHub Actions on Linux,
+macOS, and Windows.

@@ -9,3 +9,4 @@ Append one row per commit. Newest entries go at the bottom.
 | 2026-08-04 | f46ae51 | main | 0003 | Published deterministic fixture harness; CI passed on Linux, macOS, and Windows. |
 | 2026-08-04 | f468526 | main | 0004 | Published project discovery and canonical configuration; CI passed on Linux, macOS, and Windows. |
 | 2026-08-04 | c6dd720 | main | 0005 | Published safe content routing; CI passed on Linux, macOS, and Windows. |
+| 2026-08-04 | f441bb3 | main | 0006 | Published typed TOML frontmatter; CI passed on Linux, macOS, and Windows. |

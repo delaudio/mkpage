@@ -3,14 +3,14 @@
 ## Active state
 
 - **Branch:** main
-- **Active item:** 0006 — define typed page frontmatter
+- **Active item:** none — 0006 shipped
 - **Blockers:** none.
-- **Uncommitted work:** Issue #6 design and implementation.
+- **Uncommitted work:** Issue #6 delivery record.
 
 ## Last shipped
 
-c6dd720 — Add safe content routing.
+f441bb3 — Add typed page frontmatter.
 
 ## Next item
 
-Implement the typed page model and deterministic publication rules.
+Create the next ADR-backed plan item from the roadmap.

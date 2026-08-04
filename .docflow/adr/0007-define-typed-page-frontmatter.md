@@ -1,7 +1,7 @@
 ---
 adr: 0007
 title: Define typed page frontmatter
-status: Accepted
+status: Implemented
 date: 2026-08-04
 owner: default-agent
 supersedes:
@@ -63,6 +63,7 @@ determines draft and future-date visibility.
 | Date | Revision | Author | Change |
 |---|---|---|---|
 | 2026-08-04 | r1 | default-agent | Accepted typed TOML frontmatter contract. |
+| 2026-08-04 | r2 | default-agent | Implemented and shipped typed frontmatter. |
 
 ## Approvals
 
