@@ -5,13 +5,17 @@ use std::{
     path::{Component, Path, PathBuf},
 };
 
-use crate::error::{AppError, AppResult};
+use crate::{
+    error::{AppError, AppResult},
+    page::{BuildProfile, parse},
+};
 
 /// Inputs for one static-site build.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct BuildRequest {
     pub source_dir: PathBuf,
     pub output_dir: PathBuf,
+    pub profile: BuildProfile,
 }
 
 /// Files emitted by a successful build.
@@ -28,15 +32,21 @@ pub fn build_site(request: &BuildRequest) -> AppResult<BuildReport> {
     validate_output_path(&request.source_dir, &request.output_dir)?;
 
     let source = request.source_dir.join("content").join("index.md");
-    let content = fs::read_to_string(&source).map_err(|error| AppError::SourceRead {
+    let content = fs::read(&source).map_err(|error| AppError::SourceRead {
         path: source.clone(),
         message: error.to_string(),
     })?;
 
-    if content.starts_with("!invalid!") {
+    if content.starts_with(b"!invalid!") {
         return Err(AppError::InvalidFixture {
             path: source,
             message: "fixture starts with the reserved !invalid! marker".into(),
+        });
+    }
+    let page = parse(&source, &content)?;
+    if !request.profile.includes(&page) {
+        return Ok(BuildReport {
+            generated_files: vec![],
         });
     }
 
@@ -46,7 +56,11 @@ pub fn build_site(request: &BuildRequest) -> AppResult<BuildReport> {
     })?;
 
     let output = request.output_dir.join("index.html");
-    fs::write(&output, render_reference_page(&content)).map_err(|error| AppError::OutputWrite {
+    fs::write(
+        &output,
+        render_reference_page(&page.body, request.profile.shows_draft_marker(&page)),
+    )
+    .map_err(|error| AppError::OutputWrite {
         path: output.clone(),
         message: error.to_string(),
     })?;
@@ -87,9 +101,14 @@ fn validate_output_path(source_dir: &Path, output_dir: &Path) -> AppResult<()> {
     Ok(())
 }
 
-fn render_reference_page(content: &str) -> String {
+fn render_reference_page(content: &str, draft_marker: bool) -> String {
     format!(
-        "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>mkpage fixture</title>\n</head>\n<body>\n<main>\n<pre>{}</pre>\n</main>\n</body>\n</html>\n",
+        "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>mkpage fixture</title>\n</head>\n<body>\n<main>{}\n<pre>{}</pre>\n</main>\n</body>\n</html>\n",
+        if draft_marker {
+            "\n<aside data-mkpage-draft=\"true\">DRAFT</aside>"
+        } else {
+            ""
+        },
         escape_html(content.trim_end())
     )
 }

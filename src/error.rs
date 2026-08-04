@@ -74,6 +74,17 @@ pub enum AppError {
         asset: std::path::PathBuf,
         output: std::path::PathBuf,
     },
+    #[error(
+        "frontmatter error in {input} at {line}:{column}{field}: expected {expected}; {message}"
+    )]
+    Frontmatter {
+        input: std::path::PathBuf,
+        line: usize,
+        column: usize,
+        field: String,
+        expected: &'static str,
+        message: String,
+    },
 }
 
 impl AppError {
@@ -92,7 +103,8 @@ impl AppError {
             | Self::UnsafePathRelationship { .. } => ExitCode::from(4),
             Self::InvalidRoute { .. }
             | Self::RouteCollision { .. }
-            | Self::StaticAssetCollision { .. } => ExitCode::from(4),
+            | Self::StaticAssetCollision { .. }
+            | Self::Frontmatter { .. } => ExitCode::from(4),
         }
     }
 
@@ -112,6 +124,7 @@ impl AppError {
             Self::InvalidRoute { .. } => "E501",
             Self::RouteCollision { .. } => "E502",
             Self::StaticAssetCollision { .. } => "E503",
+            Self::Frontmatter { .. } => "E601",
         }
     }
 }

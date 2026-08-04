@@ -4,7 +4,10 @@ use std::{
     path::{Path, PathBuf},
 };
 
-use mkpage::compiler::BuildRequest;
+use mkpage::{
+    compiler::BuildRequest,
+    page::{BuildProfile, calendar_date},
+};
 use tempfile::TempDir;
 
 pub struct Fixture {
@@ -36,6 +39,7 @@ impl Fixture {
         BuildRequest {
             source_dir: self.source.clone(),
             output_dir: self.output.clone(),
+            profile: BuildProfile::production(calendar_date(2026, 8, 4)),
         }
     }
 }
