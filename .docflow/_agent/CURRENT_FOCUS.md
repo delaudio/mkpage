@@ -5,7 +5,7 @@
 - **Branch:** main
 - **Active item:** none — 0011 shipped
 - **Blockers:** none.
-- **Uncommitted work:** Issue #11 delivery record.
+- **Uncommitted work:** none.
 
 ## Last shipped
 
