@@ -3,14 +3,14 @@
 ## Active state
 
 - **Branch:** main
-- **Active item:** Docflow bootstrap
+- **Active item:** 0001 — Define the v0.1 product contract
 - **Blockers:** none.
-- **Uncommitted work:** Docflow scaffolding.
+- **Uncommitted work:** Product contract, ADR, and plan item.
 
 ## Last shipped
 
-None — repository initialization in progress.
+cdb5029 — Bootstrap Docflow.
 
 ## Next item
 
-Create ADR-backed plan items for the implementation roadmap, then start the lowest-numbered item.
+Complete and ship 0001, then start the next queued item.
