@@ -3,14 +3,14 @@
 ## Active state
 
 - **Branch:** main
-- **Active item:** 0008 — render pages with MiniJinja
+- **Active item:** none — 0008 shipped
 - **Blockers:** none.
-- **Uncommitted work:** Issue #8 design and implementation.
+- **Uncommitted work:** Issue #8 delivery record.
 
 ## Last shipped
 
-6922d79 — Render safe structured Markdown.
+879706f — Add bounded template rendering.
 
 ## Next item
 
-Implement MiniJinja layouts, partials, and the stable render context.
+Create the next ADR-backed plan item from the roadmap.

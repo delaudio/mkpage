@@ -11,3 +11,4 @@ Append one row per commit. Newest entries go at the bottom.
 | 2026-08-04 | c6dd720 | main | 0005 | Published safe content routing; CI passed on Linux, macOS, and Windows. |
 | 2026-08-04 | f441bb3 | main | 0006 | Published typed TOML frontmatter; CI passed on Linux, macOS, and Windows. |
 | 2026-08-04 | 6922d79 | main | 0007 | Published safe structured Markdown; CI passed on Linux, macOS, and Windows. |
+| 2026-08-04 | 879706f | main | 0008 | Published bounded MiniJinja templates; CI passed on Linux, macOS, and Windows. |

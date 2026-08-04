@@ -1,7 +1,7 @@
 ---
 adr: 0009
 title: Render pages with MiniJinja
-status: Accepted
+status: Implemented
 date: 2026-08-04
 owner: default-agent
 supersedes:
@@ -56,6 +56,7 @@ rendered by mkpage is marked safe through the single `content` context field.
 | Date | Revision | Author | Change |
 |---|---|---|---|
 | 2026-08-04 | r1 | default-agent | Accepted MiniJinja template contract. |
+| 2026-08-04 | r2 | default-agent | Implemented and shipped bounded template rendering. |
 
 ## Approvals
 

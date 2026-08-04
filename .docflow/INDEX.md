@@ -10,4 +10,4 @@
 | [0006](adr/0006-define-safe-content-routing.md) | Define safe content routing | Implemented | 2026-08-04 | core, routing, safety |
 | [0007](adr/0007-define-typed-page-frontmatter.md) | Define typed page frontmatter | Implemented | 2026-08-04 | content, frontmatter, safety |
 | [0008](adr/0008-render-safe-structured-markdown.md) | Render safe structured Markdown | Implemented | 2026-08-04 | content, markdown, safety |
-| [0009](adr/0009-render-pages-with-minijinja.md) | Render pages with MiniJinja | Accepted | 2026-08-04 | content, templates, safety |
+| [0009](adr/0009-render-pages-with-minijinja.md) | Render pages with MiniJinja | Implemented | 2026-08-04 | content, templates, safety |

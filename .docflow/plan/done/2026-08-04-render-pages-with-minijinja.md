@@ -21,3 +21,9 @@ fixtures, author documentation, and build integration.
 ## GitHub issue
 
 - https://github.com/delaudio/mkpage/issues/8
+
+## Shipped
+
+Shipped at HEAD `879706fa6dd8fbf1cf718dab353339c06960fa88` after local format,
+Clippy, test, and release-build gates plus green GitHub Actions on Linux,
+macOS, and Windows.
