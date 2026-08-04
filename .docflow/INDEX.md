@@ -9,4 +9,4 @@
 | [0005](adr/0005-define-project-discovery-and-configuration.md) | Define project discovery and configuration | Implemented | 2026-08-04 | core, configuration, safety |
 | [0006](adr/0006-define-safe-content-routing.md) | Define safe content routing | Implemented | 2026-08-04 | core, routing, safety |
 | [0007](adr/0007-define-typed-page-frontmatter.md) | Define typed page frontmatter | Implemented | 2026-08-04 | content, frontmatter, safety |
-| [0008](adr/0008-render-safe-structured-markdown.md) | Render safe structured Markdown | Accepted | 2026-08-04 | content, markdown, safety |
+| [0008](adr/0008-render-safe-structured-markdown.md) | Render safe structured Markdown | Implemented | 2026-08-04 | content, markdown, safety |

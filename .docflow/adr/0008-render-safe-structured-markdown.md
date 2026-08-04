@@ -1,7 +1,7 @@
 ---
 adr: 0008
 title: Render safe structured Markdown
-status: Accepted
+status: Implemented
 date: 2026-08-04
 owner: default-agent
 supersedes:
@@ -58,6 +58,7 @@ schemes are neutralized before output.
 | Date | Revision | Author | Change |
 |---|---|---|---|
 | 2026-08-04 | r1 | default-agent | Accepted structured Markdown rendering contract. |
+| 2026-08-04 | r2 | default-agent | Implemented and shipped safe structured Markdown. |
 
 ## Approvals
 

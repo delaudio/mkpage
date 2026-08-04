@@ -21,3 +21,9 @@ anchor generation, metadata extraction, fixtures, and documentation.
 ## GitHub issue
 
 - https://github.com/delaudio/mkpage/issues/7
+
+## Shipped
+
+Shipped at HEAD `6922d794bc9f978dbbeb7829756d89c90c1d9efd` after local format,
+Clippy, test, and release-build gates plus green GitHub Actions on Linux,
+macOS, and Windows.
