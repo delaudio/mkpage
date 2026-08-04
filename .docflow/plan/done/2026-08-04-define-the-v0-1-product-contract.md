@@ -27,3 +27,7 @@ questions. Do not select implementation technologies or build the CLI.
 ## GitHub issue
 
 - https://github.com/delaudio/mkpage/issues/1
+
+## Shipped
+
+Shipped at HEAD `ef9ea41` on 2026-08-04.

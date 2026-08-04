@@ -3,14 +3,14 @@
 ## Active state
 
 - **Branch:** main
-- **Active item:** 0001 — Define the v0.1 product contract
+- **Active item:** none — 0001 shipped
 - **Blockers:** none.
-- **Uncommitted work:** Product contract, ADR, and plan item.
+- **Uncommitted work:** Docflow shipping record.
 
 ## Last shipped
 
-cdb5029 — Bootstrap Docflow.
+ef9ea41 — Define the mkpage v0.1 product contract.
 
 ## Next item
 
-Complete and ship 0001, then start the next queued item.
+Create the next ADR-backed plan item from the roadmap.

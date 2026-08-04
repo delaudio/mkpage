@@ -1,7 +1,7 @@
 ---
 adr: 0002
 title: Define the v0.1 product contract
-status: Accepted
+status: Implemented
 date: 2026-08-04
 owner: default-agent
 supersedes:
@@ -74,6 +74,7 @@ model, CLI surface, compatibility expectations, and deliberate non-goals.
 | Date | Revision | Author | Change |
 |---|---|---|---|
 | 2026-08-04 | r1 | default-agent | Accepted product contract for v0.1. |
+| 2026-08-04 | r2 | default-agent | Shipped product contract in ef9ea41. |
 
 ## Approvals
 
