@@ -1,6 +1,7 @@
 //! Testable application boundary for the mkpage command-line interface.
 
 pub mod cli;
+pub mod compiler;
 pub mod error;
 pub mod logging;
 

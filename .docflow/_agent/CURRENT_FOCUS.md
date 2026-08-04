@@ -3,9 +3,9 @@
 ## Active state
 
 - **Branch:** main
-- **Active item:** none — 0002 shipped
+- **Active item:** 0003 — Establish deterministic golden testing
 - **Blockers:** none.
-- **Uncommitted work:** Docflow shipping record.
+- **Uncommitted work:** Fixture harness, ADR, and plan item.
 
 ## Last shipped
 
@@ -13,4 +13,4 @@
 
 ## Next item
 
-Create the next ADR-backed plan item from the roadmap.
+Verify and ship 0003, then start the next queued item.
