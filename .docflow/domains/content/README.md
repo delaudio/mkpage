@@ -7,3 +7,4 @@ content artifacts.
 - [ADR 0008 — Render safe structured Markdown](../../adr/0008-render-safe-structured-markdown.md)
 - [ADR 0009 — Render pages with MiniJinja](../../adr/0009-render-pages-with-minijinja.md)
 - [ADR 0010 — Load JSON data and collections](../../adr/0010-load-json-data-and-collections.md)
+- [ADR 0013 — Define semantic TUI widgets](../../adr/0013-define-semantic-tui-widgets.md)

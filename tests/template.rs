@@ -41,3 +41,35 @@ fn missing_or_invalid_layouts_name_the_template_source() {
     let broken = render(temp.path(), "broken", &page, &render_markdown(&page.body)).unwrap_err();
     assert!(broken.to_string().contains("broken.html"));
 }
+
+#[test]
+fn widget_macros_render_a_semantic_complete_layout() {
+    let temp = tempdir().unwrap();
+    let layouts = temp.path().join("layouts");
+    fs::create_dir_all(&layouts).unwrap();
+    fs::copy(
+        "examples/widgets/widgets.jinja",
+        layouts.join("widgets.jinja"),
+    )
+    .unwrap();
+    fs::write(layouts.join("page.html"), "{% from 'widgets.jinja' import screen, pane, split, stack, list, tree, table, tabs, article, status_bar, key_hints, dialog %}{% call screen('Site', 'ready') %}{% call pane('Projects') %}{% call split() %}{% call stack() %}{% call list('Projects', true) %}<li><a href='/projects'>Projects</a></li>{% endcall %}{% endcall %}{% endcall %}{% endcall %}{% call tree('Navigation') %}<li><a href='/'>Home</a></li>{% endcall %}{% call table('Data') %}<tr><th>Key</th></tr>{% endcall %}{% call tabs() %}<li><a href='#main'>Main</a></li>{% endcall %}{% call article() %}<p>Text</p>{% endcall %}{% call status_bar() %}ready{% endcall %}{% call key_hints() %}<li><a href='/'>Home</a></li>{% endcall %}{% call dialog('Help') %}<p>Help</p>{% endcall %}{% endcall %}").unwrap();
+    let page = parse("content/index.md".as_ref(), b"body").unwrap();
+    let output = render(&layouts, "page", &page, &render_markdown(&page.body)).unwrap();
+    assert!(output.contains("<section class=\"mk-pane\"><h2>Projects</h2>"));
+    assert!(output.contains("<nav class=\"mk-key-hints\" aria-label=\"Keyboard shortcuts\"><ul>"));
+    assert!(output.contains("<a href='/projects'>Projects</a>"));
+    assert!(output.contains("<ol class=\"mk-list\" aria-label=\"Projects\">"));
+    assert!(output.contains("<details class=\"mk-dialog\"><summary>Help</summary>"));
+    for class in [
+        "mk-split",
+        "mk-list",
+        "mk-tree",
+        "mk-table",
+        "mk-tabs",
+        "mk-article",
+        "mk-status-bar",
+        "mk-dialog",
+    ] {
+        assert!(output.contains(class), "missing {class}");
+    }
+}

@@ -3,9 +3,9 @@
 ## Active state
 
 - **Branch:** main
-- **Active item:** none — 0011 shipped
+- **Active item:** 0012 — define semantic TUI widgets
 - **Blockers:** none.
-- **Uncommitted work:** none.
+- **Uncommitted work:** Issue #12 ADR and plan.
 
 ## Last shipped
 
@@ -13,4 +13,4 @@
 
 ## Next item
 
-Create the next roadmap ADR and plan item.
+Implement the semantic widget contract and macros.

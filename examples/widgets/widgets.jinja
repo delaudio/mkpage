@@ -1,0 +1,17 @@
+{# Semantic TUI primitives. Import with: {% from 'widgets.jinja' import screen, pane, stack, status_bar, key_hints %} #}
+{% macro screen(title='', status='') -%}
+<div class="mk-screen">{% if title %}<header class="mk-screen__title"><h1>{{ title }}</h1></header>{% endif %}{{ caller() }}{% if status %}<footer class="mk-screen__status" aria-label="Status">{{ status }}</footer>{% endif %}</div>
+{%- endmacro %}
+{% macro pane(title='', label='') -%}
+<section class="mk-pane"{% if label %} aria-label="{{ label }}"{% endif %}>{% if title %}<h2>{{ title }}</h2>{% endif %}{{ caller() }}</section>
+{%- endmacro %}
+{% macro stack() -%}<div class="mk-stack">{{ caller() }}</div>{%- endmacro %}
+{% macro split() -%}<div class="mk-split">{{ caller() }}</div>{%- endmacro %}
+{% macro list(label='', ordered=false) -%}{% if ordered %}<ol class="mk-list"{% if label %} aria-label="{{ label }}"{% endif %}>{{ caller() }}</ol>{% else %}<ul class="mk-list"{% if label %} aria-label="{{ label }}"{% endif %}>{{ caller() }}</ul>{% endif %}{%- endmacro %}
+{% macro tree(label='') -%}<nav class="mk-tree"{% if label %} aria-label="{{ label }}"{% endif %}><ul>{{ caller() }}</ul></nav>{%- endmacro %}
+{% macro table(caption='') -%}<table class="mk-table">{% if caption %}<caption>{{ caption }}</caption>{% endif %}{{ caller() }}</table>{%- endmacro %}
+{% macro tabs(label='Sections') -%}<nav class="mk-tabs" aria-label="{{ label }}"><ul>{{ caller() }}</ul></nav>{%- endmacro %}
+{% macro article() -%}<article class="mk-article">{{ caller() }}</article>{%- endmacro %}
+{% macro status_bar() -%}<footer class="mk-status-bar" aria-label="Status">{{ caller() }}</footer>{%- endmacro %}
+{% macro key_hints() -%}<nav class="mk-key-hints" aria-label="Keyboard shortcuts"><ul>{{ caller() }}</ul></nav>{%- endmacro %}
+{% macro dialog(title='') -%}<details class="mk-dialog"><summary>{{ title }}</summary><div class="mk-dialog__content">{{ caller() }}</div></details>{%- endmacro %}
