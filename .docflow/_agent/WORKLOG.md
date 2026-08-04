@@ -14,3 +14,4 @@ Append one row per commit. Newest entries go at the bottom.
 | 2026-08-04 | 879706f | main | 0008 | Published bounded MiniJinja templates; CI passed on Linux, macOS, and Windows. |
 | 2026-08-04 | e2dc3be | main | 0009 | Published JSON data and collections; CI passed on Linux, macOS, and Windows. |
 | 2026-08-04 | f0402e9 | main | 0010 | Published Node-free static assets; CI passed on Linux, macOS, and Windows. |
+| 2026-08-04 | 9dfd568 | main | 0011 | Published planned builds, manifests, safe cleanup, and CLI reporting; CI passed on Linux, macOS, and Windows. |

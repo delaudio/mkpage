@@ -3,14 +3,14 @@
 ## Active state
 
 - **Branch:** main
-- **Active item:** 0011 — plan builds before output mutation
+- **Active item:** none — 0011 shipped
 - **Blockers:** none.
-- **Uncommitted work:** Issue #11 design and implementation.
+- **Uncommitted work:** Issue #11 delivery record.
 
 ## Last shipped
 
-f0402e9 — Add Node-free static assets.
+9dfd568 — Complete planned build reporting.
 
 ## Next item
 
-Implement planned builds, manifest, and safe stale cleanup.
+Create the next roadmap ADR and plan item.

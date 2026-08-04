@@ -1,7 +1,7 @@
 ---
 adr: 0012
 title: Plan builds before output mutation
-status: Accepted
+status: Implemented
 date: 2026-08-04
 owner: default-agent
 depends-on: [adr/0006-define-safe-content-routing.md, adr/0011-copy-static-assets-without-node.md]
@@ -48,6 +48,7 @@ output tree, then writes a deterministic manifest used for safe stale cleanup.
 | Date | Revision | Author | Change |
 |---|---|---|---|
 | 2026-08-04 | r1 | default-agent | Accepted planned build contract. |
+| 2026-08-04 | r2 | default-agent | Implemented deterministic planning, manifest ownership and hashes, cleanup, and CLI reporting. |
 
 ## Approvals
 

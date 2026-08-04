@@ -13,4 +13,4 @@
 | [0009](adr/0009-render-pages-with-minijinja.md) | Render pages with MiniJinja | Implemented | 2026-08-04 | content, templates, safety |
 | [0010](adr/0010-load-json-data-and-collections.md) | Load JSON data and collections | Implemented | 2026-08-04 | content, data, collections |
 | [0011](adr/0011-copy-static-assets-without-node.md) | Copy static assets without Node | Implemented | 2026-08-04 | core, assets, css, safety |
-| [0012](adr/0012-plan-builds-before-output-mutation.md) | Plan builds before output mutation | Accepted | 2026-08-04 | core, build, manifest, safety |
+| [0012](adr/0012-plan-builds-before-output-mutation.md) | Plan builds before output mutation | Implemented | 2026-08-04 | core, build, manifest, safety |
