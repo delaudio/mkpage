@@ -1,7 +1,7 @@
 ---
 adr: 0005
 title: Define project discovery and configuration
-status: Accepted
+status: Implemented
 date: 2026-08-04
 owner: default-agent
 supersedes:
@@ -57,6 +57,7 @@ and configuration paths are lexical rather than symlink-resolved.
 | Date | Revision | Author | Change |
 |---|---|---|---|
 | 2026-08-04 | r1 | default-agent | Accepted project-discovery and configuration contract. |
+| 2026-08-04 | r2 | default-agent | Shipped project discovery and configuration in f468526. |
 
 ## Approvals
 

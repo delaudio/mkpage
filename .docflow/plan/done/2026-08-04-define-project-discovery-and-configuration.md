@@ -23,3 +23,7 @@ path resolution, safety validation, diagnostics, tests, and documentation.
 ## GitHub issue
 
 - https://github.com/delaudio/mkpage/issues/4
+
+## Shipped
+
+Shipped at HEAD `f468526` on 2026-08-04. CI run `30899729611` passed on Linux, macOS, and Windows.

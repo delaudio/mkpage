@@ -7,4 +7,4 @@ Append one row per commit. Newest entries go at the bottom.
 | 2026-08-04 | ef9ea41 | main | 0001 | Published the v0.1 product contract; Rust gate deferred because the repository has no Cargo project yet. |
 | 2026-08-04 | 3c7e139 | main | 0002 | Published the Rust CLI foundation; CI passed on Linux, macOS, and Windows. |
 | 2026-08-04 | f46ae51 | main | 0003 | Published deterministic fixture harness; CI passed on Linux, macOS, and Windows. |
-| 2026-08-04 | pending | main | 0004 | Local project-discovery and configuration model verified; awaiting publication and CI. |
+| 2026-08-04 | f468526 | main | 0004 | Published project discovery and canonical configuration; CI passed on Linux, macOS, and Windows. |

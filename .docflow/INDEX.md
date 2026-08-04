@@ -6,4 +6,4 @@
 | [0002](adr/0002-define-the-v0-1-product-contract.md) | Define the v0.1 product contract | Implemented | 2026-08-04 | product, v0.1, scope |
 | [0003](adr/0003-bootstrap-the-rust-cli.md) | Bootstrap the Rust CLI | Implemented | 2026-08-04 | core, cli, quality |
 | [0004](adr/0004-establish-deterministic-golden-testing.md) | Establish deterministic golden testing | Implemented | 2026-08-04 | core, testing, deterministic |
-| [0005](adr/0005-define-project-discovery-and-configuration.md) | Define project discovery and configuration | Accepted | 2026-08-04 | core, configuration, safety |
+| [0005](adr/0005-define-project-discovery-and-configuration.md) | Define project discovery and configuration | Implemented | 2026-08-04 | core, configuration, safety |

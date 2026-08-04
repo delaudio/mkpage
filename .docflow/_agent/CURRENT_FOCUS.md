@@ -3,14 +3,14 @@
 ## Active state
 
 - **Branch:** main
-- **Active item:** 0004 — Define project discovery and configuration
+- **Active item:** none — 0004 shipped
 - **Blockers:** none.
-- **Uncommitted work:** Configuration model, discovery, safety validation, ADR, and plan item.
+- **Uncommitted work:** Docflow shipping record.
 
 ## Last shipped
 
-f46ae51 — Make fixture diagnostics portable across supported platforms.
+f468526 — Add canonical project configuration and discovery.
 
 ## Next item
 
-Verify and ship 0004, then start the next queued item.
+Create the next ADR-backed plan item from the roadmap.
