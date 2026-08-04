@@ -7,6 +7,7 @@ use std::{
 
 use crate::{
     error::{AppError, AppResult},
+    markdown::render,
     page::{BuildProfile, parse},
 };
 
@@ -56,9 +57,10 @@ pub fn build_site(request: &BuildRequest) -> AppResult<BuildReport> {
     })?;
 
     let output = request.output_dir.join("index.html");
+    let rendered = render(&page.body);
     fs::write(
         &output,
-        render_reference_page(&page.body, request.profile.shows_draft_marker(&page)),
+        render_reference_page(&rendered.html, request.profile.shows_draft_marker(&page)),
     )
     .map_err(|error| AppError::OutputWrite {
         path: output.clone(),
@@ -103,19 +105,12 @@ fn validate_output_path(source_dir: &Path, output_dir: &Path) -> AppResult<()> {
 
 fn render_reference_page(content: &str, draft_marker: bool) -> String {
     format!(
-        "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>mkpage fixture</title>\n</head>\n<body>\n<main>{}\n<pre>{}</pre>\n</main>\n</body>\n</html>\n",
+        "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>mkpage fixture</title>\n</head>\n<body>\n<main>{}\n{}\n</main>\n</body>\n</html>\n",
         if draft_marker {
             "\n<aside data-mkpage-draft=\"true\">DRAFT</aside>"
         } else {
             ""
         },
-        escape_html(content.trim_end())
+        content.trim_end()
     )
-}
-
-fn escape_html(input: &str) -> String {
-    input
-        .replace('&', "&amp;")
-        .replace('<', "&lt;")
-        .replace('>', "&gt;")
 }

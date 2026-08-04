@@ -3,9 +3,9 @@
 ## Active state
 
 - **Branch:** main
-- **Active item:** none — 0006 shipped
+- **Active item:** 0007 — render safe structured Markdown
 - **Blockers:** none.
-- **Uncommitted work:** Issue #6 delivery record.
+- **Uncommitted work:** Issue #7 design and implementation.
 
 ## Last shipped
 
@@ -13,4 +13,4 @@ f441bb3 — Add typed page frontmatter.
 
 ## Next item
 
-Create the next ADR-backed plan item from the roadmap.
+Implement safe structured Markdown rendering and metadata extraction.
