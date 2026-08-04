@@ -1,7 +1,7 @@
 ---
 adr: 0004
 title: Establish deterministic golden testing
-status: Accepted
+status: Implemented
 date: 2026-08-04
 owner: default-agent
 supersedes:
@@ -54,6 +54,7 @@ library entry point and comparing normalized output against reviewed golden file
 | Date | Revision | Author | Change |
 |---|---|---|---|
 | 2026-08-04 | r1 | default-agent | Accepted deterministic golden-test foundation. |
+| 2026-08-04 | r2 | default-agent | Shipped deterministic fixture harness in f46ae51. |
 
 ## Approvals
 

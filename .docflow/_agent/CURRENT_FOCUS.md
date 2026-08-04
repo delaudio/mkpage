@@ -3,14 +3,14 @@
 ## Active state
 
 - **Branch:** main
-- **Active item:** 0003 — Establish deterministic golden testing
+- **Active item:** none — 0003 shipped
 - **Blockers:** none.
-- **Uncommitted work:** Fixture harness, ADR, and plan item.
+- **Uncommitted work:** Docflow shipping record.
 
 ## Last shipped
 
-3c7e139 — Bootstrap the Rust CLI, CI, and repository standards.
+f46ae51 — Make fixture diagnostics portable across supported platforms.
 
 ## Next item
 
-Verify and ship 0003, then start the next queued item.
+Create the next ADR-backed plan item from the roadmap.

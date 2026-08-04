@@ -5,4 +5,4 @@
 | [0001](adr/0001-record-architecture-decisions.md) | Record architecture decisions as ADRs | Implemented | 2026-08-04 | process, conventions |
 | [0002](adr/0002-define-the-v0-1-product-contract.md) | Define the v0.1 product contract | Implemented | 2026-08-04 | product, v0.1, scope |
 | [0003](adr/0003-bootstrap-the-rust-cli.md) | Bootstrap the Rust CLI | Implemented | 2026-08-04 | core, cli, quality |
-| [0004](adr/0004-establish-deterministic-golden-testing.md) | Establish deterministic golden testing | Accepted | 2026-08-04 | core, testing, deterministic |
+| [0004](adr/0004-establish-deterministic-golden-testing.md) | Establish deterministic golden testing | Implemented | 2026-08-04 | core, testing, deterministic |

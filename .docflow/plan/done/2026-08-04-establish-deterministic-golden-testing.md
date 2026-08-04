@@ -22,3 +22,7 @@ and contributor-documentation foundation used by future compiler work.
 ## GitHub issue
 
 - https://github.com/delaudio/mkpage/issues/3
+
+## Shipped
+
+Shipped at HEAD `f46ae51` on 2026-08-04. CI run `30898854931` passed on Linux, macOS, and Windows.
