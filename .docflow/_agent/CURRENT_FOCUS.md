@@ -3,9 +3,9 @@
 ## Active state
 
 - **Branch:** main
-- **Active item:** none — 0007 shipped
+- **Active item:** 0008 — render pages with MiniJinja
 - **Blockers:** none.
-- **Uncommitted work:** Issue #7 delivery record.
+- **Uncommitted work:** Issue #8 design and implementation.
 
 ## Last shipped
 
@@ -13,4 +13,4 @@
 
 ## Next item
 
-Create the next ADR-backed plan item from the roadmap.
+Implement MiniJinja layouts, partials, and the stable render context.

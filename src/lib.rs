@@ -8,6 +8,7 @@ pub mod logging;
 pub mod markdown;
 pub mod page;
 pub mod routing;
+pub mod template;
 
 use std::path::PathBuf;
 

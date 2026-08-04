@@ -85,6 +85,11 @@ pub enum AppError {
         expected: &'static str,
         message: String,
     },
+    #[error("template error in {path}: {message}")]
+    Template {
+        path: std::path::PathBuf,
+        message: String,
+    },
 }
 
 impl AppError {
@@ -104,7 +109,8 @@ impl AppError {
             Self::InvalidRoute { .. }
             | Self::RouteCollision { .. }
             | Self::StaticAssetCollision { .. }
-            | Self::Frontmatter { .. } => ExitCode::from(4),
+            | Self::Frontmatter { .. }
+            | Self::Template { .. } => ExitCode::from(4),
         }
     }
 
@@ -125,6 +131,7 @@ impl AppError {
             Self::RouteCollision { .. } => "E502",
             Self::StaticAssetCollision { .. } => "E503",
             Self::Frontmatter { .. } => "E601",
+            Self::Template { .. } => "E701",
         }
     }
 }

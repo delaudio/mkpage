@@ -9,6 +9,7 @@ use crate::{
     error::{AppError, AppResult},
     markdown::render,
     page::{BuildProfile, parse},
+    template::render as render_template,
 };
 
 /// Inputs for one static-site build.
@@ -58,11 +59,16 @@ pub fn build_site(request: &BuildRequest) -> AppResult<BuildReport> {
 
     let output = request.output_dir.join("index.html");
     let rendered = render(&page.body);
-    fs::write(
-        &output,
-        render_reference_page(&rendered.html, request.profile.shows_draft_marker(&page)),
-    )
-    .map_err(|error| AppError::OutputWrite {
+    let document = match page.metadata.layout.as_deref() {
+        Some(layout) => render_template(
+            &request.source_dir.join("layouts"),
+            layout,
+            &page,
+            &rendered,
+        )?,
+        None => render_reference_page(&rendered.html, request.profile.shows_draft_marker(&page)),
+    };
+    fs::write(&output, document).map_err(|error| AppError::OutputWrite {
         path: output.clone(),
         message: error.to_string(),
     })?;
