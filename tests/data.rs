@@ -1,7 +1,7 @@
 use std::fs;
 
 use mkpage::{
-    data::{CollectionManifest, collection, load},
+    data::{CollectionManifest, collection, load, validate_generated_routes},
     error::AppError,
     template::render_collection,
 };
@@ -111,4 +111,16 @@ fn manifests_and_collection_items_render_through_the_normal_template_engine() {
         output,
         "&#x2f;projects&#x2f;mkpage&#x2f; &lt;safe?&gt; mkpage"
     );
+}
+
+#[test]
+fn generated_routes_share_case_insensitive_collision_validation() {
+    let temp = tempdir().unwrap();
+    fs::write(temp.path().join("items.json"), r#"[{"name":"About"}]"#).unwrap();
+    let data = load(temp.path()).unwrap();
+    let items = collection(&data, "items", "/{slug}/", Some("name")).unwrap();
+    assert!(matches!(
+        validate_generated_routes(&items, &["/about/".into()]),
+        Err(AppError::Data { .. })
+    ));
 }

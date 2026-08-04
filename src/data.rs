@@ -110,6 +110,23 @@ pub fn collection(
     }
     Ok(items)
 }
+
+/// Reject collection output that collides with authored or static routes before writing.
+pub fn validate_generated_routes(items: &[CollectionItem], occupied: &[String]) -> AppResult<()> {
+    let mut routes = occupied
+        .iter()
+        .map(|route| route.to_ascii_lowercase())
+        .collect::<BTreeSet<_>>();
+    for item in items {
+        if !routes.insert(item.route.to_ascii_lowercase()) {
+            return Err(AppError::Data {
+                path: PathBuf::from(&item.key),
+                message: format!("generated route collision at {}", item.route),
+            });
+        }
+    }
+    Ok(())
+}
 fn visit(current: &Path, files: &mut Vec<PathBuf>) -> AppResult<()> {
     for entry in fs::read_dir(current).map_err(|error| AppError::Data {
         path: current.to_path_buf(),
