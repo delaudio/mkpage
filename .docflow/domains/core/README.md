@@ -9,3 +9,4 @@ This domain groups compiler, CLI, build, and quality decisions.
 - [ADR 0005 — Define project discovery and configuration](../../adr/0005-define-project-discovery-and-configuration.md)
 - [ADR 0006 — Define safe content routing](../../adr/0006-define-safe-content-routing.md)
 - [ADR 0011 — Copy static assets without Node](../../adr/0011-copy-static-assets-without-node.md)
+- [ADR 0012 — Plan builds before output mutation](../../adr/0012-plan-builds-before-output-mutation.md)

@@ -65,3 +65,18 @@ fn golden_updates_require_an_explicit_environment_flag() {
     );
     assert!(Path::new("tests/fixtures/minimal/golden/index.html").exists());
 }
+
+#[test]
+fn stale_managed_files_are_removed_but_unmanaged_files_remain() {
+    let fixture = Fixture::copy("minimal");
+    let static_root = fixture.source.join("static");
+    std::fs::create_dir_all(&static_root).unwrap();
+    std::fs::write(static_root.join("old.css"), "old").unwrap();
+    build_site(&fixture.request()).unwrap();
+    assert!(fixture.output.join("old.css").exists());
+    std::fs::remove_file(static_root.join("old.css")).unwrap();
+    std::fs::write(fixture.output.join("notes.txt"), "unmanaged").unwrap();
+    build_site(&fixture.request()).unwrap();
+    assert!(!fixture.output.join("old.css").exists());
+    assert!(fixture.output.join("notes.txt").exists());
+}
