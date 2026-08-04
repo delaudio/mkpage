@@ -3,14 +3,14 @@
 ## Active state
 
 - **Branch:** main
-- **Active item:** 0002 — Bootstrap the Rust CLI
+- **Active item:** none — 0002 shipped
 - **Blockers:** none.
-- **Uncommitted work:** Rust CLI, documentation, CI, ADR, and plan item.
+- **Uncommitted work:** Docflow shipping record.
 
 ## Last shipped
 
-ef9ea41 — Define the mkpage v0.1 product contract.
+3c7e139 — Bootstrap the Rust CLI, CI, and repository standards.
 
 ## Next item
 
-Verify and ship 0002, then start the next queued item.
+Create the next ADR-backed plan item from the roadmap.

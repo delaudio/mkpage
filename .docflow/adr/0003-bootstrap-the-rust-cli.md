@@ -1,7 +1,7 @@
 ---
 adr: 0003
 title: Bootstrap the Rust CLI
-status: Accepted
+status: Implemented
 date: 2026-08-04
 owner: default-agent
 supersedes:
@@ -60,6 +60,7 @@ repository standards, and cross-platform CI quality gates.
 | Date | Revision | Author | Change |
 |---|---|---|---|
 | 2026-08-04 | r1 | default-agent | Accepted the initial Rust CLI boundary. |
+| 2026-08-04 | r2 | default-agent | Shipped the Rust CLI foundation in 3c7e139. |
 
 ## Approvals
 

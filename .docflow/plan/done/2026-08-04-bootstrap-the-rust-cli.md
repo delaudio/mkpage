@@ -24,3 +24,7 @@ site compilation behavior.
 ## GitHub issue
 
 - https://github.com/delaudio/mkpage/issues/2
+
+## Shipped
+
+Shipped at HEAD `3c7e139` on 2026-08-04. CI run `30898133118` passed on Linux, macOS, and Windows.
