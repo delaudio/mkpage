@@ -11,4 +11,4 @@
 | [0007](adr/0007-define-typed-page-frontmatter.md) | Define typed page frontmatter | Implemented | 2026-08-04 | content, frontmatter, safety |
 | [0008](adr/0008-render-safe-structured-markdown.md) | Render safe structured Markdown | Implemented | 2026-08-04 | content, markdown, safety |
 | [0009](adr/0009-render-pages-with-minijinja.md) | Render pages with MiniJinja | Implemented | 2026-08-04 | content, templates, safety |
-| [0010](adr/0010-load-json-data-and-collections.md) | Load JSON data and collections | Accepted | 2026-08-04 | content, data, collections |
+| [0010](adr/0010-load-json-data-and-collections.md) | Load JSON data and collections | Implemented | 2026-08-04 | content, data, collections |

@@ -1,7 +1,7 @@
 ---
 adr: 0010
 title: Load JSON data and collections
-status: Accepted
+status: Implemented
 date: 2026-08-04
 owner: default-agent
 depends-on: [adr/0005-define-project-discovery-and-configuration.md, adr/0006-define-safe-content-routing.md, adr/0009-render-pages-with-minijinja.md]
@@ -50,6 +50,7 @@ collection items render through the normal bounded template engine.
 | Date | Revision | Author | Change |
 |---|---|---|---|
 | 2026-08-04 | r1 | default-agent | Accepted JSON data and collection contract. |
+| 2026-08-04 | r2 | default-agent | Implemented and shipped JSON data and collections. |
 
 ## Approvals
 

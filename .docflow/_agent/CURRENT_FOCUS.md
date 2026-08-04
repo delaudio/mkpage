@@ -3,14 +3,14 @@
 ## Active state
 
 - **Branch:** main
-- **Active item:** 0009 — load JSON data and collections
+- **Active item:** none — 0009 shipped
 - **Blockers:** none.
-- **Uncommitted work:** Issue #9 implementation and verification.
+- **Uncommitted work:** Issue #9 delivery record.
 
 ## Last shipped
 
-879706f — Add bounded template rendering.
+e2dc3be — Validate collection route collisions.
 
 ## Next item
 
-Ship JSON data loading and collection rendering after the review gate.
+Create the next ADR-backed plan item from the roadmap.
