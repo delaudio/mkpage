@@ -11,7 +11,7 @@
 {% macro tree(label='') -%}<nav class="mk-tree"{% if label %} aria-label="{{ label }}"{% endif %}><ul>{{ caller() }}</ul></nav>{%- endmacro %}
 {% macro table(caption='') -%}<table class="mk-table">{% if caption %}<caption>{{ caption }}</caption>{% endif %}{{ caller() }}</table>{%- endmacro %}
 {% macro tabs(label='Sections') -%}<nav class="mk-tabs" aria-label="{{ label }}"><ul>{{ caller() }}</ul></nav>{%- endmacro %}
-{% macro article() -%}<article class="mk-article">{{ caller() }}</article>{%- endmacro %}
-{% macro status_bar() -%}<footer class="mk-status-bar" aria-label="Status">{{ caller() }}</footer>{%- endmacro %}
+{% macro article(id='') -%}<article class="mk-article"{% if id %} id="{{ id }}"{% endif %}>{{ caller() }}</article>{%- endmacro %}
+{% macro status_bar() -%}<div class="mk-status-bar" role="status">{{ caller() }}</div>{%- endmacro %}
 {% macro key_hints() -%}<nav class="mk-key-hints" aria-label="Keyboard shortcuts"><ul>{{ caller() }}</ul></nav>{%- endmacro %}
-{% macro dialog(title='') -%}<details class="mk-dialog"><summary>{{ title }}</summary><div class="mk-dialog__content">{{ caller() }}</div></details>{%- endmacro %}
+{% macro dialog(title='Details') -%}<details class="mk-dialog"><summary>{{ title or 'Details' }}</summary><div class="mk-dialog__content">{{ caller() }}</div></details>{%- endmacro %}

@@ -1,7 +1,9 @@
 # Semantic TUI widgets
 
 Widgets are MiniJinja macros that emit semantic HTML; borders, monospace type,
-and responsive styling are theme concerns. Import `widgets.jinja` from a layout.
+and responsive styling are theme concerns. Copy
+`examples/widgets/widgets.jinja` to the project's `layouts/widgets.jinja`, then
+import `widgets.jinja` from a layout.
 
 | Widget | HTML contract | Behaviour |
 |---|---|---|
@@ -14,12 +16,14 @@ and responsive styling are theme concerns. Import `widgets.jinja` from a layout.
 | Table | `table`, `caption`, `th` | data only, never layout |
 | Tabs | links to panels | links become enhanced tabs only with JavaScript |
 | Article | `article` | readable long-form content |
-| StatusBar | labelled `footer` | context, never sole location of essential content |
+| StatusBar | `div role="status"` | advisory updates only; never sole location of essential content |
 | KeyHints | labelled `nav ul` | hints describe shortcuts; pointer/touch alternatives remain visible |
 | Dialog | `details`/`summary` with one content region | native keyboard, pointer, and touch operation; optional JavaScript may promote it to `dialog` |
 
 Focus follows document order. Enhancements must preserve pointer, touch and
 keyboard operation, honour reduced motion, and not depend on fixed dimensions.
+StatusBar is a polite live region: use it only for short, changing advisory
+messages, not for static page footer content.
 Screen is the only page shell; Pane headings must not skip levels; Split and
 Stack only contain sibling regions; Tree contains navigation lists; Table only
 contains tabular data; Tabs are links until enhanced; Dialog content must not
