@@ -3,9 +3,9 @@
 ## Active state
 
 - **Branch:** main
-- **Active item:** none — 0008 shipped
+- **Active item:** 0009 — load JSON data and collections
 - **Blockers:** none.
-- **Uncommitted work:** Issue #8 delivery record.
+- **Uncommitted work:** Issue #9 implementation and verification.
 
 ## Last shipped
 
@@ -13,4 +13,4 @@
 
 ## Next item
 
-Create the next ADR-backed plan item from the roadmap.
+Ship JSON data loading and collection rendering after the review gate.

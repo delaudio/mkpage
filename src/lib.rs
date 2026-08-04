@@ -3,6 +3,7 @@
 pub mod cli;
 pub mod compiler;
 pub mod config;
+pub mod data;
 pub mod error;
 pub mod logging;
 pub mod markdown;

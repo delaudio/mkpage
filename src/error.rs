@@ -90,6 +90,11 @@ pub enum AppError {
         path: std::path::PathBuf,
         message: String,
     },
+    #[error("data error in {path}: {message}")]
+    Data {
+        path: std::path::PathBuf,
+        message: String,
+    },
 }
 
 impl AppError {
@@ -110,7 +115,8 @@ impl AppError {
             | Self::RouteCollision { .. }
             | Self::StaticAssetCollision { .. }
             | Self::Frontmatter { .. }
-            | Self::Template { .. } => ExitCode::from(4),
+            | Self::Template { .. }
+            | Self::Data { .. } => ExitCode::from(4),
         }
     }
 
@@ -132,6 +138,7 @@ impl AppError {
             Self::StaticAssetCollision { .. } => "E503",
             Self::Frontmatter { .. } => "E601",
             Self::Template { .. } => "E701",
+            Self::Data { .. } => "E801",
         }
     }
 }

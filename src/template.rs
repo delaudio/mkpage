@@ -6,10 +6,42 @@ use minijinja::{Environment, context, value::Value};
 use serde_json::json;
 
 use crate::{
+    data::CollectionItem,
     error::{AppError, AppResult},
     markdown::RenderedMarkdown,
     page::Page,
 };
+
+pub fn render_collection(
+    layouts: &Path,
+    layout: &str,
+    item: &CollectionItem,
+    data: &serde_json::Value,
+) -> AppResult<String> {
+    let mut environment = Environment::new();
+    environment.set_auto_escape_callback(|_| minijinja::AutoEscape::Html);
+    load_templates(&mut environment, layouts, layouts)?;
+    let name = normalize_name(layout);
+    let template = environment
+        .get_template(&name)
+        .map_err(|error| AppError::Template {
+            path: layouts.join(&name),
+            message: error.to_string(),
+        })?;
+    template
+        .render(context! {
+            site => json!({ "base_url": null, "trailing_slash": "always" }),
+            page => json!({ "route": item.route, "slug": item.slug }),
+            item => item.value.clone(),
+            collection => json!({ "key": item.key, "slug": item.slug, "route": item.route }),
+            data => data,
+            build => json!({ "profile": "bounded" }),
+        })
+        .map_err(|error| AppError::Template {
+            path: layouts.join(&name),
+            message: error.to_string(),
+        })
+}
 
 pub fn render(
     layouts: &Path,
