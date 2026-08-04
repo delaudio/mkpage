@@ -3,14 +3,14 @@
 ## Active state
 
 - **Branch:** main
-- **Active item:** 0005 — define safe content routing
+- **Active item:** none — 0005 shipped
 - **Blockers:** none.
-- **Uncommitted work:** Issue #5 implementation and verification.
+- **Uncommitted work:** Issue #5 delivery record.
 
 ## Last shipped
 
-f468526 — Add canonical project configuration and discovery.
+c6dd720 — Add safe content routing.
 
 ## Next item
 
-Complete and ship issue #5 after the required review gate.
+Create the next ADR-backed plan item from the roadmap.

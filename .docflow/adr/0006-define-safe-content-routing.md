@@ -1,7 +1,7 @@
 ---
 adr: 0006
 title: Define safe content routing
-status: Accepted
+status: Implemented
 date: 2026-08-04
 owner: default-agent
 supersedes:
@@ -54,6 +54,7 @@ types remain distinct from raw strings; collisions and traversal fail before wri
 | Date | Revision | Author | Change |
 |---|---|---|---|
 | 2026-08-04 | r1 | default-agent | Accepted safe source-routing contract. |
+| 2026-08-04 | r2 | default-agent | Implemented and shipped safe source routing. |
 
 ## Approvals
 

@@ -7,4 +7,4 @@
 | [0003](adr/0003-bootstrap-the-rust-cli.md) | Bootstrap the Rust CLI | Implemented | 2026-08-04 | core, cli, quality |
 | [0004](adr/0004-establish-deterministic-golden-testing.md) | Establish deterministic golden testing | Implemented | 2026-08-04 | core, testing, deterministic |
 | [0005](adr/0005-define-project-discovery-and-configuration.md) | Define project discovery and configuration | Implemented | 2026-08-04 | core, configuration, safety |
-| [0006](adr/0006-define-safe-content-routing.md) | Define safe content routing | Accepted | 2026-08-04 | core, routing, safety |
+| [0006](adr/0006-define-safe-content-routing.md) | Define safe content routing | Implemented | 2026-08-04 | core, routing, safety |

@@ -21,3 +21,9 @@ validation, tests, and golden fixtures for nested content.
 ## GitHub issue
 
 - https://github.com/delaudio/mkpage/issues/5
+
+## Shipped
+
+Shipped at HEAD `c6dd72024bb959b2d4eb9dec5cb9507ebf80360f` after local format,
+Clippy, test, and release-build gates plus green GitHub Actions on Linux,
+macOS, and Windows.
