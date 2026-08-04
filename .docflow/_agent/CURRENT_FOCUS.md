@@ -3,9 +3,9 @@
 ## Active state
 
 - **Branch:** main
-- **Active item:** none — 0009 shipped
+- **Active item:** 0010 — copy static assets without Node
 - **Blockers:** none.
-- **Uncommitted work:** Issue #9 delivery record.
+- **Uncommitted work:** Issue #10 implementation and verification.
 
 ## Last shipped
 
@@ -13,4 +13,4 @@ e2dc3be — Validate collection route collisions.
 
 ## Next item
 
-Create the next ADR-backed plan item from the roadmap.
+Ship the Node-free static asset pipeline after review.

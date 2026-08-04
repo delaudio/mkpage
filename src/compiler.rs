@@ -6,6 +6,7 @@ use std::{
 };
 
 use crate::{
+    assets,
     error::{AppError, AppResult},
     markdown::render,
     page::{BuildProfile, parse},
@@ -73,9 +74,14 @@ pub fn build_site(request: &BuildRequest) -> AppResult<BuildReport> {
         message: error.to_string(),
     })?;
 
-    Ok(BuildReport {
-        generated_files: vec![PathBuf::from("index.html")],
-    })
+    let mut generated_files = vec![PathBuf::from("index.html")];
+    generated_files.extend(assets::copy(
+        &request.source_dir.join("static"),
+        &request.output_dir,
+        std::slice::from_ref(&output),
+    )?);
+    generated_files.sort();
+    Ok(BuildReport { generated_files })
 }
 
 fn validate_output_path(source_dir: &Path, output_dir: &Path) -> AppResult<()> {

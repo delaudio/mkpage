@@ -1,5 +1,6 @@
 //! Testable application boundary for the mkpage command-line interface.
 
+pub mod assets;
 pub mod cli;
 pub mod compiler;
 pub mod config;
