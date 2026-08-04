@@ -6,8 +6,10 @@
 
 ## Scope
 
-Document the widget contract, provide MiniJinja macros and fixtures for the
-non-interactive primitives, and specify progressive-enhancement boundaries.
+Document the widget contract, provide MiniJinja macros and fixtures for all
+widgets in ADR 0013, including the interactive progressive-enhancement
+contracts for Tabs and Dialog plus the KeyHints pointer/touch fallback
+contract.
 
 ## Exit criteria
 

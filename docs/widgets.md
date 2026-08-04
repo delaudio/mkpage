@@ -37,6 +37,15 @@ and activate them with Enter; pointer and touch users activate the same links.
 Without JavaScript the browser navigates to the linked panel by fragment id.
 With JavaScript an enhancement layer may apply tab roles, arrow-key movement,
 and selected-state styling, but it must keep the original link targets working.
+Dialog starts as native disclosure. Keyboard users focus the summary and toggle
+it with Enter or Space; pointer and touch users toggle the same summary control.
+Without JavaScript the disclosure remains a standard `details` element. With
+JavaScript an enhancement layer may promote it to a modal `dialog`, but it must
+preserve the `details` fallback, use native `dialog.showModal()` or equivalent
+accessible modality, move focus into the dialog on open, keep focus within the
+modal while open, provide a visible close control, support Escape close where
+applicable, return focus to the opener on close, and keep the fallback content
+readable when JavaScript is absent.
 
 ```html
 <nav class="mk-key-hints" aria-label="Keyboard shortcuts"><ul><li><a href="/">Home</a></li></ul></nav>
@@ -51,6 +60,15 @@ and selected-state styling, but it must keep the original link targets working.
 </nav>
 <article id="panel-main">Main panel</article>
 <article id="panel-notes">Notes panel</article>
+```
+
+```html
+<details class="mk-dialog">
+  <summary>Help</summary>
+  <div class="mk-dialog__content">
+    <p>Press <kbd>g</kbd> then <kbd>h</kbd> to return home.</p>
+  </div>
+</details>
 ```
 
 ```jinja
