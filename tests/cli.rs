@@ -39,7 +39,7 @@ fn global_options_are_available_to_subcommands() {
 
     assert_eq!(
         CommandContext::from(&cli).root,
-        std::path::PathBuf::from("site")
+        Some(std::path::PathBuf::from("site"))
     );
     assert_eq!(
         CommandContext::from(&cli).config,
@@ -73,16 +73,19 @@ fn application_errors_have_stable_exit_codes() {
 #[test]
 fn each_command_reaches_its_own_handler() {
     for (input, expected) in [
-        (["mkpage", "init"].as_slice(), "init"),
-        (["mkpage", "build"].as_slice(), "build"),
-        (["mkpage", "dev"].as_slice(), "dev"),
-        (["mkpage", "serve"].as_slice(), "serve"),
+        (["mkpage", "init"].as_slice(), "init is not implemented yet"),
+        (
+            ["mkpage", "build"].as_slice(),
+            "could not read configuration",
+        ),
+        (["mkpage", "dev"].as_slice(), "dev is not implemented yet"),
+        (
+            ["mkpage", "serve"].as_slice(),
+            "serve is not implemented yet",
+        ),
     ] {
         let cli = Cli::try_parse_from(input).expect("command should parse");
         let error = mkpage::run(cli).expect_err("handler should report its pending state");
-        assert_eq!(
-            error.to_string(),
-            format!("{expected} is not implemented yet")
-        );
+        assert!(error.to_string().starts_with(expected));
     }
 }

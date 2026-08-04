@@ -11,8 +11,8 @@ use clap::{ArgAction, Parser, Subcommand};
 )]
 pub struct Cli {
     /// Project root to use instead of the current directory.
-    #[arg(long, global = true, default_value = ".")]
-    pub root: PathBuf,
+    #[arg(long, global = true)]
+    pub root: Option<PathBuf>,
 
     /// Explicit configuration file path.
     #[arg(long, global = true)]

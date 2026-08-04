@@ -2,6 +2,7 @@
 
 pub mod cli;
 pub mod compiler;
+pub mod config;
 pub mod error;
 pub mod logging;
 
@@ -13,7 +14,7 @@ use error::AppResult;
 /// Shared options resolved before a command handler runs.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CommandContext {
-    pub root: PathBuf,
+    pub root: Option<PathBuf>,
     pub config: Option<PathBuf>,
     pub verbosity: u8,
     pub quiet: bool,
@@ -56,10 +57,23 @@ pub mod init {
 pub mod build {
     use super::{
         CommandContext,
+        config::{ResolveOptions, resolve},
         error::{AppError, AppResult},
     };
+    use std::env;
 
-    pub fn run(_context: CommandContext) -> AppResult<()> {
+    pub fn run(context: CommandContext) -> AppResult<()> {
+        let project = resolve(&ResolveOptions {
+            start_dir: env::current_dir().map_err(|error| AppError::Message {
+                message: error.to_string(),
+            })?,
+            root: context.root,
+            config: context.config,
+        })?;
+        if context.verbosity > 0 {
+            eprintln!("mkpage: project root: {}", project.root.display());
+            eprintln!("mkpage: configuration: {}", project.config_path.display());
+        }
         Err(AppError::NotImplemented { command: "build" })
     }
 }

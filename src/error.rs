@@ -33,6 +33,29 @@ pub enum AppError {
         path: std::path::PathBuf,
         message: String,
     },
+
+    #[error("could not read configuration {path}: {message}")]
+    ConfigRead {
+        path: std::path::PathBuf,
+        message: String,
+    },
+    #[error("invalid configuration {path}: {message}")]
+    ConfigParse {
+        path: std::path::PathBuf,
+        message: String,
+    },
+    #[error("unsupported configuration version {found} in {path}; supported version is 1")]
+    UnsupportedConfigVersion {
+        path: std::path::PathBuf,
+        found: u32,
+    },
+    #[error("unsafe output directory: {path}")]
+    UnsafeOutputPath { path: std::path::PathBuf },
+    #[error("source path {input} overlaps output directory {output}")]
+    UnsafePathRelationship {
+        input: std::path::PathBuf,
+        output: std::path::PathBuf,
+    },
 }
 
 impl AppError {
@@ -44,6 +67,11 @@ impl AppError {
             | Self::OutputWrite { .. }
             | Self::OutputPathTraversal { .. }
             | Self::InvalidFixture { .. } => ExitCode::from(4),
+            Self::ConfigRead { .. }
+            | Self::ConfigParse { .. }
+            | Self::UnsupportedConfigVersion { .. }
+            | Self::UnsafeOutputPath { .. }
+            | Self::UnsafePathRelationship { .. } => ExitCode::from(4),
         }
     }
 
@@ -55,6 +83,11 @@ impl AppError {
             Self::OutputWrite { .. } => "E201",
             Self::OutputPathTraversal { .. } => "E202",
             Self::InvalidFixture { .. } => "E301",
+            Self::ConfigRead { .. } => "E401",
+            Self::ConfigParse { .. } => "E402",
+            Self::UnsupportedConfigVersion { .. } => "E403",
+            Self::UnsafeOutputPath { .. } => "E404",
+            Self::UnsafePathRelationship { .. } => "E405",
         }
     }
 }

@@ -23,3 +23,6 @@ cargo build --release
 ```
 
 The command surface currently reserves `init`, `build`, `dev`, and `serve`.
+
+See [configuration](docs/configuration.md) for `mkpage.toml`, path safety, and
+command precedence.
