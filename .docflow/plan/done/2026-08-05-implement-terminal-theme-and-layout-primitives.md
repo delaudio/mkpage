@@ -45,4 +45,4 @@ Shipped with terminal theme fixture and token coverage in:
 - `tests/fixtures/theme/`
 - `tests/theme.rs`
 
-Shipped at HEAD `dd6854e` after local format, clippy, and full test gates.
+Shipped at HEAD `b9ee99d` after local format, clippy, and full test gates.
