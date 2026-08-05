@@ -1,7 +1,7 @@
 ---
 adr: 0013
 title: Define semantic TUI widgets
-status: Accepted
+status: Implemented
 date: 2026-08-04
 owner: default-agent
 depends-on: [adr/0009-render-pages-with-minijinja.md]
@@ -59,6 +59,7 @@ and remain useful without JavaScript.
 |---|---|---|---|
 | 2026-08-04 | r1 | default-agent | Initial semantic widget contract. |
 | 2026-08-04 | r2 | default-agent | Accepted for autonomous implementation. |
+| 2026-08-05 | r3 | default-agent | Implemented through documented macros, fixtures, and contract refinements. |
 
 ## Approvals
 

@@ -18,3 +18,6 @@ Append one row per commit. Newest entries go at the bottom.
 | 2026-08-04 | 125343e | main | 0012 | Proposed the semantic widget contract ADR, queued the implementation plan, and drafted the public widget contract. |
 | 2026-08-04 | 3fa5fb3 | main | 0012 | Accepted the semantic widget contract ADR and refreshed the decision index for implementation. |
 | 2026-08-04 | c69db50 | main | 0012 | Implemented semantic widget macros, examples, and full-layout coverage pending final ship/push. |
+| 2026-08-05 | c267772 | main | 0012 | Documented ADR/plan/worklog follow-ups for macro delivery and branch review feedback. |
+| 2026-08-05 | f054ba1 | main | 0012 | Tightened widget enhancement contracts and aligned scope messaging. |
+| 2026-08-05 | 13f4b59 | main | 0012 | Added pane heading-level control and nesting coverage for the widget contract and tests. |
