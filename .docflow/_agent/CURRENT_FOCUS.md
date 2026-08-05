@@ -10,7 +10,7 @@
 ## Last shipped
 
 - d0abe64 — Ship semantic TUI widgets.
-- 1b5feac — Implement terminal-themed, responsive reference style system.
+- 3b2dc9b — Implement terminal-themed, responsive reference style system.
 
 ## Next item
 
