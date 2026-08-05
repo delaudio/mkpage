@@ -22,4 +22,4 @@ Append one row per commit. Newest entries go at the bottom.
 | 2026-08-05 | f054ba1 | main | 0012 | Tightened widget enhancement contracts and aligned scope messaging. |
 | 2026-08-05 | 13f4b59 | main | 0012 | Added pane heading-level control and nesting coverage for the widget contract and tests. |
 | 2026-08-05 | 3b2dc9b | main | 0014 | Added terminal theme starter stylesheet, fixture, and theme tests with responsive token coverage. |
-| 2026-08-05 | TODO_SHIP_COMMIT | main | 0015 | Implemented optional keyboard enhancement runtime, opt-in widget markers, docs, and enhancement asset emission tests. |
+| 2026-08-05 | e243335 | main | 0015 | Implemented optional keyboard enhancement runtime, opt-in widget markers, docs, and enhancement asset emission tests. |

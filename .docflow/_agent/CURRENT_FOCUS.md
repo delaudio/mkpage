@@ -11,7 +11,7 @@
 
 - d0abe64 — Ship semantic TUI widgets.
 - 3b2dc9b — Implement terminal-themed, responsive reference style system.
-- TODO_SHIP_COMMIT — Ship progressive keyboard enhancements.
+- e243335 — Ship progressive keyboard enhancements.
 
 ## Next item
 

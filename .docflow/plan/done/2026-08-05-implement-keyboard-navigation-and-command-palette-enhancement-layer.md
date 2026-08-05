@@ -46,7 +46,7 @@ attributes.
 ## Shipped
 
 Shipped with runtime asset, template wiring, and test coverage at HEAD
-`TODO_SHIP_COMMIT` on 2026-08-05 after:
+`e243335` on 2026-08-05 after:
 
 - `cargo fmt --check`
 - `cargo clippy --all-targets --all-features -- -D warnings`
