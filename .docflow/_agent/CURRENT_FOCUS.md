@@ -3,9 +3,9 @@
 ## Active state
 
 - **Branch:** main
-- **Active item:** Issue #17 (next planned server polish/follow-ups).
+- **Active item:** Issue #19.
 - **Blockers:** none.
-- **Uncommitted work:** yes.
+- **Uncommitted work:** no.
 
 ## Last shipped
 
@@ -14,6 +14,7 @@
 - e46ca88 — Ship progressive keyboard enhancements.
 - b886060 — Implement safe project scaffolding starter.
 - 3737d27 — Ship live development server and local preview commands.
+- HEAD — Improve local preview server response behavior.
 
 ## Next item
-- Issue #18.
+- Issue #19.

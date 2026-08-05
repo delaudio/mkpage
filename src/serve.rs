@@ -3,7 +3,7 @@
 use std::{
     fs,
     io::{Read, Write},
-    net::{TcpListener, TcpStream},
+    net::TcpListener,
     path::{Component, Path, PathBuf},
 };
 
@@ -70,7 +70,10 @@ pub fn serve_from_listener(listener: TcpListener, root: PathBuf, verbose: bool) 
     Ok(())
 }
 
-fn handle_request(stream: &mut TcpStream, root: &Path) -> AppResult<()> {
+fn handle_request<W>(stream: &mut W, root: &Path) -> AppResult<()>
+where
+    W: Read + Write,
+{
     let mut buffer = [0u8; 8192];
     let len = stream
         .read(&mut buffer)
@@ -84,7 +87,7 @@ fn handle_request(stream: &mut TcpStream, root: &Path) -> AppResult<()> {
     let request_line = match std::str::from_utf8(&buffer[..len]) {
         Ok(text) => text.split("\r\n").next().unwrap_or("").to_string(),
         Err(_) => {
-            return write_text_response(stream, 400, "Bad Request", "invalid request", false);
+            return write_text_response(stream, 400, "Bad Request", "invalid request", false, None);
         }
     };
 
@@ -99,13 +102,21 @@ fn handle_request(stream: &mut TcpStream, root: &Path) -> AppResult<()> {
             "Method Not Allowed",
             "only GET and HEAD are supported",
             false,
+            Some("GET, HEAD"),
         );
     }
 
     let (requested, is_directory) = match resolve_request_path(target) {
         Some(value) => value,
         None => {
-            return write_text_response(stream, 400, "Bad Request", "unsafe request path", false);
+            return write_text_response(
+                stream,
+                400,
+                "Bad Request",
+                "unsafe request path",
+                false,
+                None,
+            );
         }
     };
 
@@ -118,13 +129,27 @@ fn handle_request(stream: &mut TcpStream, root: &Path) -> AppResult<()> {
     let candidate = root.join(candidate);
 
     if candidate.is_dir() {
-        return write_text_response(stream, 404, "Not Found", "not found", method == "HEAD");
+        return write_text_response(
+            stream,
+            404,
+            "Not Found",
+            "not found",
+            method == "HEAD",
+            None,
+        );
     }
 
     let bytes = match fs::read(&candidate) {
         Ok(bytes) => bytes,
         Err(_) => {
-            return write_text_response(stream, 404, "Not Found", "not found", method == "HEAD");
+            return write_text_response(
+                stream,
+                404,
+                "Not Found",
+                "not found",
+                method == "HEAD",
+                None,
+            );
         }
     };
 
@@ -174,13 +199,17 @@ fn safe_relative_path(path: &Path) -> std::result::Result<PathBuf, ()> {
     Ok(normalized)
 }
 
-fn write_text_response(
-    stream: &mut TcpStream,
+fn write_text_response<W>(
+    stream: &mut W,
     status: u16,
     reason: &str,
     body: &str,
     head_only: bool,
-) -> AppResult<()> {
+    allow: Option<&str>,
+) -> AppResult<()>
+where
+    W: Write,
+{
     let bytes = body.as_bytes();
     write_response(
         stream,
@@ -189,35 +218,55 @@ fn write_text_response(
         "text/plain; charset=utf-8",
         bytes,
         head_only,
+        allow,
     )
 }
 
-fn write_file_response(
-    stream: &mut TcpStream,
+fn write_file_response<W>(
+    stream: &mut W,
     status: u16,
     reason: &str,
     file: &Path,
     bytes: &[u8],
     head_only: bool,
-) -> AppResult<()> {
-    write_response(stream, status, reason, content_type(file), bytes, head_only)
+) -> AppResult<()>
+where
+    W: Write,
+{
+    write_response(
+        stream,
+        status,
+        reason,
+        content_type(file),
+        bytes,
+        head_only,
+        None,
+    )
 }
 
-fn write_response(
-    stream: &mut TcpStream,
+fn write_response<W>(
+    stream: &mut W,
     status: u16,
     reason: &str,
     content_type: &str,
     bytes: &[u8],
     head_only: bool,
-) -> AppResult<()> {
-    let header = format!(
-        "HTTP/1.1 {} {}\r\nContent-Type: {}\r\nContent-Length: {}\r\nConnection: close\r\n\r\n",
+    allow: Option<&str>,
+) -> AppResult<()>
+where
+    W: Write,
+{
+    let mut header = format!(
+        "HTTP/1.1 {} {}\r\nContent-Type: {}\r\nContent-Length: {}\r\nConnection: close\r\n",
         status,
         reason,
         content_type,
         bytes.len(),
     );
+    if let Some(allowed) = allow {
+        header.push_str(&format!("Allow: {allowed}\r\n"));
+    }
+    header.push_str("Cache-Control: no-cache, no-store, must-revalidate\r\n\r\n");
     stream
         .write_all(header.as_bytes())
         .map_err(|error| AppError::Message {
@@ -286,11 +335,14 @@ fn hex_value(value: u8) -> Option<u8> {
 
 #[cfg(test)]
 mod tests {
-    use std::fs;
-    use std::path::PathBuf;
+    use std::{
+        fs,
+        io::{Cursor, Read},
+        path::PathBuf,
+    };
     use tempfile::TempDir;
 
-    use super::{ensure_index_or_file, safe_relative_path};
+    use super::{ensure_index_or_file, handle_request, safe_relative_path};
 
     #[test]
     fn resolve_request_paths_ensure_index_fallback() {
@@ -314,5 +366,92 @@ mod tests {
     fn safe_relative_path_blocks_traversal() {
         assert!(safe_relative_path(&PathBuf::from("../etc/passwd")).is_err());
         assert!(safe_relative_path(&PathBuf::from("/absolute")).is_err());
+    }
+
+    #[test]
+    fn method_not_allowed_includes_allow_header() {
+        let temp = TempDir::new().expect("temp dir");
+        let response =
+            run_request_via_cursor(temp.path(), b"POST / HTTP/1.1\r\nHost: localhost\r\n\r\n");
+        let (status_line, headers) = split_response(&response);
+
+        assert_eq!(status_line, "HTTP/1.1 405 Method Not Allowed");
+        assert!(
+            headers.contains("Allow: GET, HEAD"),
+            "missing allow header in {headers}"
+        );
+    }
+
+    #[test]
+    fn head_request_does_not_return_body() {
+        let temp = TempDir::new().expect("temp dir");
+        fs::write(temp.path().join("index.html"), b"index page").expect("write");
+
+        let response =
+            run_request_via_cursor(temp.path(), b"HEAD / HTTP/1.1\r\nHost: localhost\r\n\r\n");
+        let (status_line, body) = split_response_parts(&response);
+        assert_eq!(status_line, "HTTP/1.1 200 OK");
+        assert!(
+            status_line.contains("200"),
+            "expected 200 for head request: {status_line}"
+        );
+        assert_eq!(body.len(), 0);
+    }
+
+    #[test]
+    fn query_parameters_are_preserved_for_path_matching() {
+        let temp = TempDir::new().expect("temp dir");
+        fs::create_dir(temp.path().join("blog")).expect("mkdir");
+        fs::write(temp.path().join("blog").join("index.html"), "blog").expect("write");
+
+        let response = run_request_via_cursor(
+            temp.path(),
+            b"GET /blog/?page=2 HTTP/1.1\r\nHost: localhost\r\n\r\n",
+        );
+        let (status_line, body) = split_response_parts(&response);
+
+        assert_eq!(status_line, "HTTP/1.1 200 OK");
+        assert_eq!(std::str::from_utf8(body).expect("utf8"), "blog");
+    }
+
+    fn run_request_via_cursor(root: &std::path::Path, request: &[u8]) -> Vec<u8> {
+        let mut stream = Cursor::new(request.to_vec());
+        let bytes_len = stream.get_ref().len() as u64;
+        let root = root.to_path_buf();
+        handle_request(&mut stream, &root).expect("handle");
+
+        let mut response = Vec::new();
+        stream.set_position(bytes_len);
+        stream.read_to_end(&mut response).expect("read response");
+        response
+    }
+
+    fn split_response(response: &[u8]) -> (String, String) {
+        let delimiter = b"\r\n\r\n";
+        let idx = response
+            .windows(delimiter.len())
+            .position(|window| window == delimiter)
+            .map(|i| i + delimiter.len())
+            .unwrap_or(0);
+        let header_block = String::from_utf8_lossy(&response[..idx]).into_owned();
+        let status = header_block.lines().next().unwrap_or("").trim().to_string();
+        let headers = header_block.lines().skip(1).collect::<Vec<_>>().join("\n");
+        (status, headers)
+    }
+
+    fn split_response_parts(response: &[u8]) -> (String, &[u8]) {
+        let delimiter = b"\r\n\r\n";
+        let idx = response
+            .windows(delimiter.len())
+            .position(|window| window == delimiter)
+            .map(|i| i + delimiter.len())
+            .unwrap_or(0);
+        let status = String::from_utf8_lossy(&response[..idx])
+            .lines()
+            .next()
+            .unwrap_or("")
+            .trim()
+            .to_string();
+        (status, &response[idx..])
     }
 }

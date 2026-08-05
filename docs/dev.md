@@ -21,3 +21,4 @@ Behavioral notes:
 - `serve` requires a generated output directory (for example `public`).
 - requests use safe path mapping and fallback to `index.html` for directory-like
   routes.
+- non-GET/HEAD methods return `405 Method Not Allowed` with `Allow: GET, HEAD`.
