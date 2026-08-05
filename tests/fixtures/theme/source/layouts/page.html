@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>{{ page.title }}</title>
+  <link rel="stylesheet" href="/css/site.css">
+</head>
+<body>
+  <main class="mk-screen">
+    <header class="mk-screen__header">
+      <h1>{{ page.title }}</h1>
+    </header>
+    <section class="mk-split">
+      <section class="mk-pane">
+        <h2>Content</h2>
+        {{ content | safe }}
+      </section>
+      <section class="mk-pane">
+        <h2>Links</h2>
+        <ul class="mk-list">
+          <li><a href="/">Home</a></li>
+          <li><a href="/projects">Projects</a></li>
+        </ul>
+      </section>
+    </section>
+    <section class="mk-article" id="status">
+      <p>Status row</p>
+    </section>
+  </main>
+</body>
+</html>

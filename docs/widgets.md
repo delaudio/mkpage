@@ -1,7 +1,8 @@
 # Semantic TUI widgets
 
 Widgets are MiniJinja macros that emit semantic HTML; borders, monospace type,
-and responsive styling are theme concerns. Copy
+and responsive styling are theme concerns (theme tokens and breakpoints are
+documented in [theme.md](theme.md). Copy
 `examples/widgets/widgets.jinja` to the project's `layouts/widgets.jinja`, then
 import `widgets.jinja` from a layout.
 

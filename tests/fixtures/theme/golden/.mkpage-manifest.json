@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "owner": "mkpage",
+  "files": [
+    {
+      "path": "css/site.css",
+      "kind": "asset",
+      "size": 5813,
+      "sha256": "0d65d0cb1f862d7531d7809edbaa386b46af06fbe22ee863331aa7efd0a8dc52"
+    },
+    {
+      "path": "index.html",
+      "kind": "page",
+      "size": 734,
+      "sha256": "7acb8240a35d3d7fd89b096799513353ac286a6d548b2fed56d445d3a7f99d25"
+    }
+  ]
+}

@@ -83,3 +83,16 @@ fn stale_managed_files_are_removed_but_unmanaged_files_remain() {
     assert!(!fixture.output.join("old.css").exists());
     assert!(fixture.output.join("notes.txt").exists());
 }
+
+#[test]
+fn theme_fixture_uses_terminal_reference_styling_contract() {
+    let fixture = Fixture::copy("theme");
+    let report = build_site(&fixture.request()).expect("theme fixture should build");
+
+    assert_eq!(report.generated_files.len(), 2);
+    assert_eq!(report.page_count, 1);
+    assert_eq!(report.asset_count, 1);
+    assert!(fixture.output.join("css/site.css").is_file());
+    assert!(fixture.output.join("index.html").is_file());
+    assert_golden_tree(&fixture.output, &fixture.golden);
+}
