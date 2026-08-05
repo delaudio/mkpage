@@ -5,6 +5,12 @@ use std::{
     io::{Read, Write},
     net::TcpListener,
     path::{Component, Path, PathBuf},
+    sync::{
+        Arc,
+        atomic::{AtomicU64, Ordering},
+    },
+    thread,
+    time::Duration,
 };
 
 use crate::CommandContext;
@@ -13,6 +19,8 @@ use crate::{
     config::{ResolveOptions, resolve},
     error::{AppError, AppResult},
 };
+
+const DEV_RELOAD_PATH: &str = "/__mkpage/dev/reload";
 
 /// Dispatches `mkpage serve` to the local preview loop.
 pub fn run(context: CommandContext, args: Serve) -> AppResult<()> {
@@ -50,8 +58,18 @@ pub fn run(context: CommandContext, args: Serve) -> AppResult<()> {
 
 /// Runs a static file server from an already-bound listener.
 pub fn serve_from_listener(listener: TcpListener, root: PathBuf, verbose: bool) -> AppResult<()> {
+    serve_from_listener_with_reload(listener, root, verbose, None)
+}
+
+/// Runs a static file server from an already-bound listener with reload events.
+pub fn serve_from_listener_with_reload(
+    listener: TcpListener,
+    root: PathBuf,
+    verbose: bool,
+    reload_epoch: Option<Arc<AtomicU64>>,
+) -> AppResult<()> {
     for stream in listener.incoming() {
-        let mut stream = match stream {
+        let stream = match stream {
             Ok(stream) => stream,
             Err(error) => {
                 return Err(AppError::Message {
@@ -59,18 +77,27 @@ pub fn serve_from_listener(listener: TcpListener, root: PathBuf, verbose: bool) 
                 });
             }
         };
+        let root = root.clone();
+        let reload_epoch = reload_epoch.clone();
 
-        if let Err(error) = handle_request(&mut stream, &root) {
-            if verbose {
-                eprintln!("mkpage: request error: {error}");
+        thread::spawn(move || {
+            let mut stream = stream;
+            if let Err(error) = handle_request(&mut stream, &root, reload_epoch) {
+                if verbose {
+                    eprintln!("mkpage: request error: {error}");
+                }
             }
-        }
+        });
     }
 
     Ok(())
 }
 
-fn handle_request<W>(stream: &mut W, root: &Path) -> AppResult<()>
+fn handle_request<W>(
+    stream: &mut W,
+    root: &Path,
+    reload_epoch: Option<Arc<AtomicU64>>,
+) -> AppResult<()>
 where
     W: Read + Write,
 {
@@ -94,6 +121,20 @@ where
     let mut parts = request_line.split_whitespace();
     let method = parts.next().unwrap_or("");
     let target = parts.next().unwrap_or("/");
+
+    if method == "GET" && target == DEV_RELOAD_PATH {
+        return match reload_epoch {
+            Some(epoch) => serve_reload_stream(stream, epoch),
+            None => write_text_response(
+                stream,
+                404,
+                "Not Found",
+                "dev reload endpoint not available",
+                false,
+                None,
+            ),
+        };
+    }
 
     if method != "GET" && method != "HEAD" {
         return write_text_response(
@@ -125,55 +166,113 @@ where
     } else {
         requested.clone()
     };
-    let candidate = ensure_index_or_file(root, &file).unwrap_or(file);
-    let candidate = root.join(candidate);
+    let candidate = resolve_candidate(root, &file);
 
-    if candidate.is_dir() {
-        return write_text_response(
-            stream,
-            404,
-            "Not Found",
-            "not found",
-            method == "HEAD",
-            None,
-        );
-    }
+    match candidate {
+        Some(candidate) => {
+            let bytes = fs::read(&candidate).map_err(|error| AppError::SourceRead {
+                path: candidate.clone(),
+                message: error.to_string(),
+            })?;
+            write_file_response(
+                stream,
+                200,
+                "OK",
+                &candidate,
+                &bytes,
+                method == "HEAD",
+                reload_epoch,
+            )
+        }
+        None => {
+            let fallback = root.join("404.html");
+            if fallback.exists() {
+                let bytes = fs::read(&fallback).map_err(|error| AppError::SourceRead {
+                    path: fallback.clone(),
+                    message: error.to_string(),
+                })?;
+                return write_file_response(
+                    stream,
+                    404,
+                    "Not Found",
+                    &fallback,
+                    &bytes,
+                    method == "HEAD",
+                    None,
+                );
+            }
 
-    let bytes = match fs::read(&candidate) {
-        Ok(bytes) => bytes,
-        Err(_) => {
-            return write_text_response(
+            write_text_response(
                 stream,
                 404,
                 "Not Found",
                 "not found",
                 method == "HEAD",
                 None,
-            );
+            )
         }
-    };
-
-    write_file_response(stream, 200, "OK", &candidate, &bytes, method == "HEAD")
+    }
 }
 
-fn ensure_index_or_file(root: &Path, requested: &Path) -> Option<PathBuf> {
-    let safe = match safe_relative_path(requested) {
-        Ok(path) => path,
-        Err(_) => return None,
-    };
+fn serve_reload_stream<W>(stream: &mut W, reload_epoch: Arc<AtomicU64>) -> AppResult<()>
+where
+    W: Write,
+{
+    let headers = "HTTP/1.1 200 OK\r\nContent-Type: text/event-stream; charset=utf-8\r\nCache-Control: no-cache\r\n\r\n";
+    stream
+        .write_all(headers.as_bytes())
+        .map_err(|error| AppError::Message {
+            message: error.to_string(),
+        })?;
+
+    let mut last = reload_epoch.load(Ordering::Acquire);
+    loop {
+        let current = reload_epoch.load(Ordering::Acquire);
+        if current != last {
+            let event = format!("event: reload\ndata: {current}\n\n");
+            stream
+                .write_all(event.as_bytes())
+                .map_err(|_| AppError::Message {
+                    message: "client disconnected".to_string(),
+                })?;
+            last = current;
+        }
+        thread::sleep(Duration::from_millis(250));
+    }
+}
+
+fn resolve_candidate(root: &Path, requested: &Path) -> Option<PathBuf> {
+    let safe = safe_relative_path(requested).ok()?;
+    if safe.as_os_str().is_empty() {
+        let index = root.join("index.html");
+        if index.is_file() {
+            return Some(index);
+        }
+        return None;
+    }
+
     let candidate = root.join(&safe);
     if candidate.is_file() {
-        return Some(safe);
+        return Some(candidate);
     }
-    let index_path = safe.join("index.html");
-    if root.join(index_path).exists() {
-        return Some(safe.join("index.html"));
+
+    let index = candidate.join("index.html");
+    if index.is_file() {
+        return Some(index);
     }
+
     None
 }
 
 fn resolve_request_path(raw: &str) -> Option<(PathBuf, bool)> {
     let path = raw.split('?').next().unwrap_or("");
+    if path == DEV_RELOAD_PATH {
+        return Some((
+            PathBuf::from(DEV_RELOAD_PATH.trim_start_matches('/')),
+            false,
+        ));
+    }
+
     let decoded = percent_decode(path);
     let no_prefix = decoded.strip_prefix('/').unwrap_or(&decoded);
     if no_prefix.is_empty() {
@@ -229,16 +328,25 @@ fn write_file_response<W>(
     file: &Path,
     bytes: &[u8],
     head_only: bool,
+    reload_epoch: Option<Arc<AtomicU64>>,
 ) -> AppResult<()>
 where
     W: Write,
 {
+    let bytes = if reload_epoch.is_some()
+        && file.extension().and_then(|extension| extension.to_str()) == Some("html")
+    {
+        inject_live_reload_script(bytes)
+    } else {
+        bytes.to_vec()
+    };
+
     write_response(
         stream,
         status,
         reason,
         content_type(file),
-        bytes,
+        &bytes,
         head_only,
         None,
     )
@@ -267,6 +375,7 @@ where
         header.push_str(&format!("Allow: {allowed}\r\n"));
     }
     header.push_str("Cache-Control: no-cache, no-store, must-revalidate\r\n\r\n");
+
     stream
         .write_all(header.as_bytes())
         .map_err(|error| AppError::Message {
@@ -319,17 +428,24 @@ fn percent_decode(raw: &str) -> String {
 }
 
 fn hex_pair(a: u8, b: u8) -> Option<u8> {
-    let hi = hex_value(a)?;
-    let lo = hex_value(b)?;
-    Some((hi << 4) | lo)
+    let a = (a as char).to_digit(16)? as u8;
+    let b = (b as char).to_digit(16)? as u8;
+    Some((a << 4) | b)
 }
 
-fn hex_value(value: u8) -> Option<u8> {
-    match value {
-        b'0'..=b'9' => Some(value - b'0'),
-        b'a'..=b'f' => Some(value - b'a' + 10),
-        b'A'..=b'F' => Some(value - b'A' + 10),
-        _ => None,
+fn inject_live_reload_script(bytes: &[u8]) -> Vec<u8> {
+    const MARKER: &str = "</body>";
+    const SCRIPT: &str = "<script>(function(){const source=new EventSource('/__mkpage/dev/reload');source.addEventListener('reload',function(){window.location.reload();});})();</script>";
+
+    let source = String::from_utf8_lossy(bytes);
+    if let Some(index) = source.rfind(MARKER) {
+        let mut output = String::with_capacity(source.len() + SCRIPT.len());
+        output.push_str(&source[..index]);
+        output.push_str(SCRIPT);
+        output.push_str(&source[index..]);
+        output.into_bytes()
+    } else {
+        format!("{source}{SCRIPT}").into_bytes()
     }
 }
 
@@ -342,7 +458,10 @@ mod tests {
     };
     use tempfile::TempDir;
 
-    use super::{ensure_index_or_file, handle_request, safe_relative_path};
+    use super::{
+        handle_request, inject_live_reload_script, resolve_candidate, resolve_request_path,
+        safe_relative_path,
+    };
 
     #[test]
     fn resolve_request_paths_ensure_index_fallback() {
@@ -352,14 +471,27 @@ mod tests {
         fs::write(temp.path().join("posts").join("index.html"), "post").expect("write post index");
 
         assert_eq!(
-            ensure_index_or_file(temp.path(), &PathBuf::from("")).expect("root index"),
-            PathBuf::from("index.html")
+            resolve_candidate(temp.path(), &PathBuf::from("")).expect("root index"),
+            temp.path().join("index.html")
         );
         assert_eq!(
-            ensure_index_or_file(temp.path(), &PathBuf::from("posts")).expect("directory"),
-            PathBuf::from("posts/index.html")
+            resolve_candidate(temp.path(), &PathBuf::from("posts")).expect("directory"),
+            temp.path().join("posts/index.html")
         );
-        assert!(ensure_index_or_file(temp.path(), &PathBuf::from("missing")).is_none());
+        assert!(resolve_candidate(temp.path(), &PathBuf::from("missing")).is_none());
+    }
+
+    #[test]
+    fn resolve_request_paths_split_query_and_root() {
+        assert_eq!(
+            resolve_request_path("/blog/page.html?x=1"),
+            Some((PathBuf::from("blog/page.html"), false))
+        );
+        assert_eq!(
+            resolve_request_path("/blog/?page=2"),
+            Some((PathBuf::from("blog"), true))
+        );
+        assert_eq!(resolve_request_path("/"), Some((PathBuf::new(), true)));
     }
 
     #[test]
@@ -399,6 +531,17 @@ mod tests {
     }
 
     #[test]
+    fn injects_reload_script_for_html_pages() {
+        let html = b"<html><body><h1>hello</h1></body></html>";
+        let patched = inject_live_reload_script(html);
+        assert!(
+            std::str::from_utf8(&patched)
+                .expect("utf8")
+                .contains("/__mkpage/dev/reload")
+        );
+    }
+
+    #[test]
     fn query_parameters_are_preserved_for_path_matching() {
         let temp = TempDir::new().expect("temp dir");
         fs::create_dir(temp.path().join("blog")).expect("mkdir");
@@ -418,7 +561,7 @@ mod tests {
         let mut stream = Cursor::new(request.to_vec());
         let bytes_len = stream.get_ref().len() as u64;
         let root = root.to_path_buf();
-        handle_request(&mut stream, &root).expect("handle");
+        handle_request(&mut stream, &root, None).expect("handle");
 
         let mut response = Vec::new();
         stream.set_position(bytes_len);
