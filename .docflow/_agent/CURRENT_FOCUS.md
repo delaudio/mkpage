@@ -5,12 +5,12 @@
 - **Branch:** main
 - **Active item:** None
 - **Blockers:** none.
-- **Uncommitted work:** Shipment artifacts for item 0012 and issue closure notes.
+- **Uncommitted work:** Issue #12 closure note.
 
 ## Last shipped
 
-9dfd568 — Complete planned build reporting.
+d0abe64 — Ship semantic TUI widgets.
 
 ## Next item
 
-Move 0012 to shipped state, publish item 0012 on main, and close issue #12.
+Close issue #12 and move to next roadmap item in sequence.

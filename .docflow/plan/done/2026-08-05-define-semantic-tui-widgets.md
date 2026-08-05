@@ -26,4 +26,4 @@ contract.
 
 ## Shipped
 
-Shipped at HEAD `13f4b5952c0cb7f4a3a4f5d9e1b9c4f8f7e6d4a1` after local format, clippy, test, and release-build gates plus local issue 12 closure.
+Shipped at HEAD `d0abe64` after local format, clippy, test, and release-build gates plus local issue 12 closure.
