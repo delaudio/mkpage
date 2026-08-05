@@ -21,4 +21,4 @@ Append one row per commit. Newest entries go at the bottom.
 | 2026-08-05 | c267772 | main | 0012 | Documented ADR/plan/worklog follow-ups for macro delivery and branch review feedback. |
 | 2026-08-05 | f054ba1 | main | 0012 | Tightened widget enhancement contracts and aligned scope messaging. |
 | 2026-08-05 | 13f4b59 | main | 0012 | Added pane heading-level control and nesting coverage for the widget contract and tests. |
-| 2026-08-05 | 5224824 | main | 0014 | Added terminal theme starter stylesheet, fixture, and theme tests with responsive token coverage. |
+| 2026-08-05 | dd6854e | main | 0014 | Added terminal theme starter stylesheet, fixture, and theme tests with responsive token coverage. |
