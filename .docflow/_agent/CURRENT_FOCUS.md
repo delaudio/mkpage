@@ -3,9 +3,9 @@
 ## Active state
 
 - **Branch:** main
-- **Active item:** none.
+- **Active item:** implement optional site artifact generation (`metadata.json`, `feed.xml`, `sitemap.xml`) behind `[site]` config flags.
 - **Blockers:** none.
-- **Uncommitted work:** no.
+- **Uncommitted work:** yes.
 
 ## Last shipped
 

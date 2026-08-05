@@ -118,6 +118,7 @@ fn build_once(project: &ResolvedProject, context: &CommandContext) -> AppResult<
         output_dir: project.paths.output.clone(),
         profile: BuildProfile::development(time::OffsetDateTime::now_utc().date()),
         keyboard_runtime_enabled: project.config.enhancements.keyboard,
+        site: project.config.site.clone(),
     })?;
 
     if !context.quiet {

@@ -90,6 +90,7 @@ pub mod build {
             output_dir: project.paths.output,
             profile: BuildProfile::production(time::OffsetDateTime::now_utc().date()),
             keyboard_runtime_enabled: project.config.enhancements.keyboard,
+            site: project.config.site,
         })?;
         if !context.quiet {
             println!(

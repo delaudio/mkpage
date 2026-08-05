@@ -40,6 +40,9 @@ pub struct Paths {
 pub struct Site {
     pub base_url: Option<String>,
     pub trailing_slash: TrailingSlash,
+    pub include_metadata: bool,
+    pub include_feed: bool,
+    pub include_sitemap: bool,
 }
 
 #[derive(Debug, Clone, Default, Deserialize, PartialEq, Eq)]
@@ -86,6 +89,18 @@ impl Default for Site {
         Self {
             base_url: None,
             trailing_slash: TrailingSlash::Always,
+            include_metadata: false,
+            include_feed: false,
+            include_sitemap: false,
+        }
+    }
+}
+
+impl TrailingSlash {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            Self::Always => "always",
+            Self::Never => "never",
         }
     }
 }

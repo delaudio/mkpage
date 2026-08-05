@@ -7,6 +7,7 @@ inheritance use the same relative template namespace.
 The public context is intentionally bounded:
 
 - `site`: public site settings;
+- `site.base_url` and `site.trailing_slash` from `[site]` configuration;
 - `page`: validated metadata, headings, and link metadata;
 - `content`: rendered Markdown, the only trusted HTML value;
 - `data`: validated structured data;

@@ -1,6 +1,6 @@
 use std::fs;
 
-use mkpage::{markdown::render as render_markdown, page::parse, template::render};
+use mkpage::{config::Site, markdown::render as render_markdown, page::parse, template::render};
 use tempfile::tempdir;
 
 #[test]
@@ -24,7 +24,16 @@ fn nested_layouts_escape_values_and_only_trust_rendered_markdown() {
         b"+++\ntitle = \"<unsafe>\"\n+++\n# Hello\n",
     )
     .unwrap();
-    let output = render(&layouts, "post", &page, &render_markdown(&page.body), false).unwrap();
+    let site = Site::default();
+    let output = render(
+        &layouts,
+        "post",
+        &page,
+        &render_markdown(&page.body),
+        &site,
+        false,
+    )
+    .unwrap();
     assert!(output.contains("&lt;unsafe&gt;"));
     assert!(output.contains("<h1 id=\"hello\">Hello</h1>"));
 }
@@ -33,11 +42,13 @@ fn nested_layouts_escape_values_and_only_trust_rendered_markdown() {
 fn missing_or_invalid_layouts_name_the_template_source() {
     let temp = tempdir().unwrap();
     let page = parse("content/post.md".as_ref(), b"body").unwrap();
+    let site = Site::default();
     let missing = render(
         temp.path(),
         "missing",
         &page,
         &render_markdown(&page.body),
+        &site,
         false,
     )
     .unwrap_err();
@@ -50,6 +61,7 @@ fn missing_or_invalid_layouts_name_the_template_source() {
         "broken",
         &page,
         &render_markdown(&page.body),
+        &site,
         false,
     )
     .unwrap_err();
@@ -68,7 +80,16 @@ fn widget_macros_render_a_semantic_complete_layout() {
     .unwrap();
     fs::write(layouts.join("page.html"), "{% from 'widgets.jinja' import screen, pane, split, stack, list, tree, table, tabs, article, status_bar, key_hints, dialog %}{% call screen('Site', 'ready') %}{% call pane('Projects') %}{% call split() %}{% call stack() %}{% call list('Projects', true) %}<li><a href='/projects'>Projects</a></li>{% endcall %}{% call pane('Nested', '', 3) %}<p>Nested body</p>{% endcall %}{% endcall %}{% endcall %}{% endcall %}{% call tree('Navigation') %}<li><a href='/'>Home</a></li>{% endcall %}{% call table('Data') %}<tr><th>Key</th></tr>{% endcall %}{% call tabs() %}<li><a href='#main'>Main</a></li>{% endcall %}{% call article('main') %}<p>Text</p>{% endcall %}{% call status_bar() %}ready{% endcall %}{% call key_hints() %}<li><a href='/'>Home</a></li>{% endcall %}{% call dialog('Help') %}<p>Help</p>{% endcall %}{% endcall %}").unwrap();
     let page = parse("content/index.md".as_ref(), b"body").unwrap();
-    let output = render(&layouts, "page", &page, &render_markdown(&page.body), false).unwrap();
+    let site = Site::default();
+    let output = render(
+        &layouts,
+        "page",
+        &page,
+        &render_markdown(&page.body),
+        &site,
+        false,
+    )
+    .unwrap();
     assert!(output.contains("<section class=\"mk-pane\""));
     assert!(output.contains("<h3>Nested</h3>") && output.contains("Nested body"),);
     assert!(output.contains("<nav class=\"mk-key-hints\""));

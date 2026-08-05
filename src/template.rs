@@ -6,6 +6,7 @@ use minijinja::{Environment, context, value::Value};
 use serde_json::json;
 
 use crate::{
+    config::Site,
     data::CollectionItem,
     error::{AppError, AppResult},
     markdown::RenderedMarkdown,
@@ -48,6 +49,7 @@ pub fn render(
     layout: &str,
     page: &Page,
     markdown: &RenderedMarkdown,
+    site: &Site,
     keyboard_runtime_enabled: bool,
 ) -> AppResult<String> {
     let mut environment = Environment::new();
@@ -62,8 +64,8 @@ pub fn render(
         })?;
     template.render(context! {
         site => json!({
-            "base_url": null,
-            "trailing_slash": "always",
+            "base_url": site.base_url,
+            "trailing_slash": site.trailing_slash.as_str(),
             "enhancements": {
                 "keyboard": keyboard_runtime_enabled
             }

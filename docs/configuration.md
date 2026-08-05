@@ -37,6 +37,9 @@ output = "public"
 [site]
 base_url = "https://example.com"
 trailing_slash = "always" # or "never"
+include_metadata = false
+include_feed = false
+include_sitemap = false
 
 [theme]
 name = "terminal"
@@ -47,6 +50,13 @@ keyboard = true
 
 Defaults are `content`, `layouts`, `data`, `static`, `public`, the `terminal`
 theme, keyboard enhancements enabled, and an `always` trailing-slash policy.
+
+Site artifact generation is opt-in:
+
+- `include_metadata = true` writes `metadata.json` with one route record per built
+  page.
+- `include_feed = true` writes `feed.xml`.
+- `include_sitemap = true` writes `sitemap.xml`.
 
 All configured paths are made absolute lexically from the configuration file’s
 directory; they do not have to exist while parsing. mkpage does not dereference

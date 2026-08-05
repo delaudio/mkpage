@@ -4,8 +4,10 @@ use std::path::Path;
 
 use mkpage::{
     compiler::{BuildRequest, build_site},
+    config::TrailingSlash,
     error::AppError,
 };
+use serde_json::Value;
 use support::{Fixture, assert_golden_tree};
 
 #[test]
@@ -45,6 +47,7 @@ fn builds_all_markdown_content_routes() {
         output_dir: output.clone(),
         profile: mkpage::page::BuildProfile::production(mkpage::page::calendar_date(2026, 8, 4)),
         keyboard_runtime_enabled: false,
+        site: Default::default(),
     };
 
     let report = build_site(&request).expect("build should render all pages");
@@ -100,6 +103,7 @@ fn keyboard_runtime_rejects_static_collisions() {
         output_dir: temp.path().join("public"),
         profile: mkpage::page::BuildProfile::production(mkpage::page::calendar_date(2026, 8, 4)),
         keyboard_runtime_enabled: true,
+        site: Default::default(),
     };
 
     let error = build_site(&request).expect_err("runtime collision should fail");
@@ -152,6 +156,7 @@ fn output_path_traversal_is_rejected() {
         output_dir: fixture.temp.path().join("escape").join("..").join(".."),
         profile: mkpage::page::BuildProfile::production(mkpage::page::calendar_date(2026, 8, 4)),
         keyboard_runtime_enabled: false,
+        site: Default::default(),
     })
     .expect_err("traversal should fail");
 
@@ -181,6 +186,71 @@ fn stale_managed_files_are_removed_but_unmanaged_files_remain() {
     build_site(&fixture.request()).unwrap();
     assert!(!fixture.output.join("old.css").exists());
     assert!(fixture.output.join("notes.txt").exists());
+}
+
+#[test]
+fn site_artifacts_are_created_only_when_enabled() {
+    let fixture = Fixture::copy("minimal");
+    let mut request = fixture.request();
+    request.site.include_metadata = false;
+    request.site.include_feed = false;
+    request.site.include_sitemap = false;
+    let report = build_site(&request).unwrap();
+    assert_eq!(
+        report.generated_files,
+        vec![std::path::PathBuf::from("index.html")]
+    );
+    assert!(!request.output_dir.join("metadata.json").exists());
+    assert!(!request.output_dir.join("feed.xml").exists());
+    assert!(!request.output_dir.join("sitemap.xml").exists());
+
+    request.site.include_metadata = true;
+    request.site.include_feed = true;
+    request.site.include_sitemap = true;
+    request.site.base_url = Some("https://example.com".to_string());
+    request.site.trailing_slash = TrailingSlash::Always;
+    let report = build_site(&request).unwrap();
+
+    assert!(
+        report
+            .generated_files
+            .contains(&Path::new("metadata.json").to_path_buf())
+    );
+    assert!(
+        report
+            .generated_files
+            .contains(&Path::new("feed.xml").to_path_buf())
+    );
+    assert!(
+        report
+            .generated_files
+            .contains(&Path::new("sitemap.xml").to_path_buf())
+    );
+    assert!(report.output_dir.join("metadata.json").is_file());
+    assert!(report.output_dir.join("feed.xml").is_file());
+    assert!(report.output_dir.join("sitemap.xml").is_file());
+
+    let metadata: Value =
+        serde_json::from_slice(&std::fs::read(report.output_dir.join("metadata.json")).unwrap())
+            .unwrap();
+    let feed = std::fs::read_to_string(report.output_dir.join("feed.xml")).unwrap();
+    let sitemap = std::fs::read_to_string(report.output_dir.join("sitemap.xml")).unwrap();
+
+    assert_eq!(
+        metadata["base_url"],
+        serde_json::json!("https://example.com")
+    );
+    assert_eq!(metadata["trailing_slash"], serde_json::json!("always"));
+    let pages = metadata["pages"].as_array().unwrap();
+    assert_eq!(pages.len(), 1);
+    assert_eq!(pages[0]["route"], "/");
+    assert_eq!(pages[0]["path"], "index.html");
+    assert_eq!(pages[0]["title"], serde_json::Value::Null);
+
+    assert!(feed.contains("<link>https://example.com/</link>"));
+    assert!(feed.contains("<item>"));
+    assert!(feed.contains("<title>mkpage</title>"));
+    assert!(sitemap.contains("<loc>https://example.com/</loc>"));
 }
 
 #[test]

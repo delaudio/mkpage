@@ -43,6 +43,7 @@ impl Fixture {
             output_dir: self.output.clone(),
             profile: BuildProfile::production(calendar_date(2026, 8, 4)),
             keyboard_runtime_enabled: false,
+            site: Default::default(),
         }
     }
 }
