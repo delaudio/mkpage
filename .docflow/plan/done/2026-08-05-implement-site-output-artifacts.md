@@ -34,3 +34,5 @@ Artifacts are controlled by site configuration and are not enabled by default.
 - Added generator helpers and tests for optional artifact creation.
 - Updated configuration docs for new flags.
 - Validation passed with `cargo fmt --check`, `cargo clippy --all-targets --all-features`, `cargo test --all-targets --all-features`.
+
+Shipped at `5cb1e64`.
