@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use clap::{ArgAction, Parser, Subcommand};
+use clap::{ArgAction, Args, Parser, Subcommand};
 
 /// mkpage command-line interface.
 #[derive(Debug, Parser)]
@@ -33,11 +33,22 @@ pub struct Cli {
 #[derive(Debug, Subcommand)]
 pub enum Command {
     /// Create a new mkpage project.
-    Init,
+    Init(Init),
     /// Build a static site.
     Build,
     /// Watch source files and serve development output.
     Dev,
     /// Serve an existing generated site locally.
     Serve,
+}
+
+#[derive(Debug, Args)]
+pub struct Init {
+    /// Target directory. Defaults to current working directory.
+    #[arg(value_name = "DIRECTORY", default_value = ".")]
+    pub directory: std::path::PathBuf,
+
+    /// Starter template to install.
+    #[arg(short, long, default_value = "default")]
+    pub template: String,
 }

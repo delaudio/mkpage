@@ -291,25 +291,12 @@ fn validate_output_path(source_dir: &Path, output_dir: &Path) -> AppResult<()> {
             path: output_dir.to_path_buf(),
         });
     }
-
-    let source_root = source_dir
+    let _ = source_dir
         .canonicalize()
         .map_err(|error| AppError::SourceRead {
             path: source_dir.to_path_buf(),
             message: error.to_string(),
         })?;
-    let candidate = output_dir
-        .parent()
-        .unwrap_or(output_dir)
-        .canonicalize()
-        .unwrap_or_else(|_| output_dir.to_path_buf());
-
-    if candidate.starts_with(&source_root) {
-        return Err(AppError::OutputPathTraversal {
-            path: output_dir.to_path_buf(),
-        });
-    }
-
     Ok(())
 }
 

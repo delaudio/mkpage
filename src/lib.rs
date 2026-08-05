@@ -7,6 +7,7 @@ pub mod config;
 pub mod data;
 pub mod enhancements;
 pub mod error;
+pub mod init;
 pub mod logging;
 pub mod markdown;
 pub mod page;
@@ -43,21 +44,19 @@ pub fn run(cli: Cli) -> AppResult<()> {
     let context = CommandContext::from(&cli);
 
     match cli.command {
-        Command::Init => init::run(context),
+        Command::Init(args) => {
+            let summary = init::run(context, args)?;
+            for path in &summary.created {
+                println!("created: {}", path.display());
+            }
+            for path in &summary.skipped {
+                println!("skipped: {}", path.display());
+            }
+            Ok(())
+        }
         Command::Build => build::run(context),
         Command::Dev => dev::run(context),
         Command::Serve => serve::run(context),
-    }
-}
-
-pub mod init {
-    use super::{
-        CommandContext,
-        error::{AppError, AppResult},
-    };
-
-    pub fn run(_context: CommandContext) -> AppResult<()> {
-        Err(AppError::NotImplemented { command: "init" })
     }
 }
 

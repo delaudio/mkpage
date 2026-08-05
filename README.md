@@ -29,3 +29,12 @@ enabled with the generated runtime asset.
 
 See [configuration](docs/configuration.md) for `mkpage.toml`, path safety, and
 command precedence.
+
+Quick start:
+
+```sh
+mkpage init .
+mkpage build --root .
+```
+
+See [docs/init.md](docs/init.md) for starter behavior and next-step guidance.

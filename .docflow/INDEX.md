@@ -17,3 +17,4 @@
 | [0013](adr/0013-define-semantic-tui-widgets.md) | Define semantic TUI widgets | Implemented | 2026-08-05 | content, widgets, accessibility, tui |
 | [0014](adr/0014-define-responsive-terminal-theme-system.md) | Define responsive terminal theme system | Implemented | 2026-08-05 | theme, css, accessibility, responsiveness, usability |
 | [0015](adr/0015-define-progressive-keyboard-enhancements.md) | Define progressive keyboard enhancement layer | Implemented | 2026-08-05 | enhancement, accessibility, input, javascript, routing |
+| [0016](adr/0016-define-safe-project-scaffolding-starter.md) | Define safe project scaffolding for the default starter | Implemented | 2026-08-05 | scaffolding, starter, dx, init |

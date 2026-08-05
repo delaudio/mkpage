@@ -1,0 +1,17 @@
+version = 1
+
+[paths]
+source = "content"
+layouts = "layouts"
+data = "data"
+static_files = "static"
+output = "public"
+
+[site]
+trailing_slash = "always"
+
+[theme]
+name = "terminal"
+
+[enhancements]
+keyboard = true

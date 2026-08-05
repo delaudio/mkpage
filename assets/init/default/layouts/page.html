@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ page.title or "mkpage portfolio" }}</title>
+  <link rel="stylesheet" href="/css/site.css">
+  <link rel="stylesheet" href="/css/override.css">
+  {% if site.enhancements.keyboard %}
+  <script
+    type="module"
+    src="/js/mkpage-keyboard-v1.js"
+    data-mkpage-route-shortcuts='{"g h":"/","g p":"/projects/","g w":"/writing/","g a":"/about/","g u":"/uses/","g o":"/"}'
+    data-mkpage-help-title="Keyboard shortcuts">
+  </script>
+  {% endif %}
+</head>
+<body>
+  {% from 'widgets.jinja' import screen, split, pane, key_hints, status_bar, list %}
+  {% call screen(page.title or 'mkpage portfolio', 'Press ? for help') %}
+    {% call split() %}
+      {% call pane('Dashboard', level=2) %}
+        {{ content | safe }}
+      {% endcall %}
+      {% call pane('Navigation', level=2) %}
+        {% call list('Site map', false) %}
+          <li><a href="/">Home</a></li>
+          <li><a href="/projects/">Projects</a></li>
+          <li><a href="/writing/">Writing</a></li>
+          <li><a href="/about/">About</a></li>
+          <li><a href="/uses/">Uses</a></li>
+        {% endcall %}
+      {% endcall %}
+      {% call pane('Project highlights', level=2) %}
+        <p>Project metadata comes from <code>data/projects.json</code>.</p>
+        <p>Open <a href="/projects/mkpage/">the mkpage project</a> for the detail view.</p>
+      {% endcall %}
+      {% call pane('Writing feed', level=2) %}
+        <p>Latest article: <a href="/writing/notes-from-terminal-design/">Notes from terminal design</a>.</p>
+      {% endcall %}
+    {% endcall %}
+    {% call pane('Active hints', level=2) %}
+      {% call status_bar() %}
+        <strong>Core mode:</strong> no-JavaScript and keyboard/touch/mouse supported.
+      {% endcall %}
+      {% call key_hints() %}
+        <li><kbd>g</kbd> + <kbd>h</kbd> go home</li>
+        <li><kbd>g</kbd> + <kbd>p</kbd> projects</li>
+        <li><kbd>g</kbd> + <kbd>w</kbd> writing</li>
+        <li><kbd>?</kbd> help</li>
+      {% endcall %}
+    {% endcall %}
+  {% endcall %}
+</body>
+</html>

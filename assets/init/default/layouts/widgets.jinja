@@ -1,0 +1,22 @@
+{# Semantic TUI primitives. Imported in layouts with: {% from 'widgets.jinja' import screen, pane, split, stack, status_bar, key_hints, list %} #}
+{% macro screen(title='', status='') -%}
+<div class="mk-screen" data-mkpage-widget="screen" data-mkpage-enhance="off">
+  {% if title %}<header class="mk-screen__header"><h1>{{ title }}</h1></header>{% endif %}
+  {{ caller() }}
+  {% if status %}<footer class="mk-screen__status" aria-label="Status">{{ status }}</footer>{% endif %}
+</div>
+{%- endmacro %}
+
+{% macro pane(title='', label='', level=2) -%}
+<section class="mk-pane" data-mkpage-widget="pane" data-mkpage-enhance="off"{% if label and not title %} aria-label="{{ label }}"{% endif %}>
+  {% if title %}
+    {% if level == 3 %}<h3>{{ title }}</h3>{% elif level == 4 %}<h4>{{ title }}</h4>{% elif level == 5 %}<h5>{{ title }}</h5>{% elif level >= 6 %}<h6>{{ title }}</h6>{% else %}<h2>{{ title }}</h2>{% endif %}
+  {% endif %}
+  {{ caller() }}
+</section>
+{%- endmacro %}
+{% macro split() -%}<div class="mk-split" data-mkpage-widget="split" data-mkpage-enhance="false">{{ caller() }}</div>{%- endmacro %}
+{% macro stack() -%}<div class="mk-stack" data-mkpage-widget="stack" data-mkpage-enhance="false">{{ caller() }}</div>{%- endmacro %}
+{% macro list(label='', ordered=false) -%}{% if ordered %}<ol class="mk-list" data-mkpage-widget="list" data-mkpage-enhance="keyboard"{% if label %} aria-label="{{ label }}"{% endif %}>{{ caller() }}</ol>{% else %}<ul class="mk-list" data-mkpage-widget="list" data-mkpage-enhance="keyboard"{% if label %} aria-label="{{ label }}"{% endif %}>{{ caller() }}</ul>{% endif %}{%- endmacro %}
+{% macro status_bar() -%}<div class="mk-status-bar" role="status">{{ caller() }}</div>{%- endmacro %}
+{% macro key_hints() -%}<nav class="mk-key-hints" data-mkpage-widget="key-hints" data-mkpage-enhance="keyboard" aria-label="Keyboard shortcuts"><ul>{{ caller() }}</ul></nav>{%- endmacro %}

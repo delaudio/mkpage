@@ -1,0 +1,29 @@
+:root {
+  --mk-color-bg: #0d1326;
+  --mk-color-surface: #111a32;
+  --mk-color-text: #e9eeff;
+  --mk-color-text-muted: #a6b0cd;
+  --mk-color-border: #2b3a62;
+  --mk-color-accent: #6de4ff;
+  --mk-shell-max-width: 80rem;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --mk-color-bg: #f6f7fb;
+    --mk-color-surface: #ffffff;
+    --mk-color-text: #13213a;
+    --mk-color-text-muted: #41506b;
+    --mk-color-accent: #0a6fff;
+    --mk-color-border: #d1d6e5;
+    --mk-split-gap: 0.8rem;
+  }
+
+  body {
+    color-scheme: light;
+  }
+
+  a {
+    color: var(--mk-color-accent);
+  }
+}

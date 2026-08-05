@@ -1,0 +1,12 @@
+[
+  {
+    "name": "mkpage",
+    "summary": "A terminal-inspired static-site generator in Rust.",
+    "status": "active"
+  },
+  {
+    "name": "terminal-tools",
+    "summary": "A compact command-first toolkit for writing and publishing.",
+    "status": "active"
+  }
+]

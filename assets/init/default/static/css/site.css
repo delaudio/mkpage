@@ -1,0 +1,321 @@
+:root {
+  --mk-color-bg: #0b1020;
+  --mk-color-surface: #121b2e;
+  --mk-color-text: #e4e8f2;
+  --mk-color-text-muted: #9aa3bd;
+  --mk-color-muted-bg: #0f1730;
+  --mk-color-accent: #72c7ff;
+  --mk-color-border: #25314f;
+  --mk-color-focus: #8de0ff;
+  --mk-color-ok: #64d7a1;
+  --mk-color-warn: #ffbf60;
+  --mk-color-danger: #ff8a8a;
+
+  --mk-font-family: "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --mk-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  --mk-font-size-body: 1rem;
+  --mk-font-size-small: 0.92rem;
+  --mk-font-size-code: 0.92rem;
+  --mk-leading: 1.55;
+
+  --mk-space: 0.75rem;
+  --mk-space-lg: 1.25rem;
+  --mk-space-xl: 1.75rem;
+  --mk-shell-max-width: 74rem;
+  --mk-shell-padding: clamp(0.75rem, 2vw, 1.5rem);
+  --mk-clip-radius: 0.5rem;
+
+  --mk-shadow-soft: 0 0.15rem 0.5rem rgba(0, 0, 0, 0.25);
+  --mk-focus-outline: 0.16rem solid var(--mk-color-focus);
+  --mk-split-gap: 1rem;
+  --mk-split-divider: var(--mk-color-border);
+  --mk-transition: 140ms ease;
+
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  background:
+    radial-gradient(circle at top, #141d31, var(--mk-color-bg) 35%, var(--mk-color-bg));
+  color: var(--mk-color-text);
+  font-family: var(--mk-font-family);
+  font-size: var(--mk-font-size-body);
+  line-height: var(--mk-leading);
+}
+
+a {
+  color: inherit;
+}
+
+.mk-screen {
+  min-height: 100vh;
+  padding: var(--mk-shell-padding);
+  display: grid;
+  gap: var(--mk-space-lg);
+}
+
+.mk-screen__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--mk-space);
+}
+
+.mk-screen h1,
+.mk-screen h2,
+.mk-screen h3,
+.mk-screen h4,
+.mk-screen h5,
+.mk-screen h6 {
+  margin: 0 0 var(--mk-space) 0;
+}
+
+.mk-screen p {
+  margin: 0 0 var(--mk-space-lg) 0;
+}
+
+.mk-screen__body {
+  margin: 0 auto;
+  width: min(100%, var(--mk-shell-max-width));
+}
+
+.mk-pane,
+.mk-status-bar,
+.mk-tree,
+.mk-table,
+.mk-article,
+.mk-dialog,
+.mk-list,
+.mk-key-hints,
+.mk-tabs {
+  background: linear-gradient(to bottom right, color-mix(in srgb, var(--mk-color-surface) 92%, transparent), var(--mk-color-surface));
+  border: 1px solid var(--mk-color-border);
+  border-radius: var(--mk-clip-radius);
+  padding: var(--mk-space);
+  box-shadow: var(--mk-shadow-soft);
+}
+
+.mk-pane h2,
+.mk-pane h3,
+.mk-pane h4,
+.mk-pane h5,
+.mk-pane h6 {
+  color: var(--mk-color-text);
+  border-bottom: 1px solid var(--mk-color-border);
+  padding-bottom: calc(var(--mk-space) * 0.35);
+  margin-bottom: var(--mk-space);
+}
+
+.mk-pane + .mk-pane {
+  margin-top: var(--mk-space);
+}
+
+.mk-split > .mk-pane + .mk-pane {
+  border-top: 1px solid var(--mk-split-divider);
+  padding-top: var(--mk-space);
+}
+
+.mk-split {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: start;
+  gap: var(--mk-split-gap);
+}
+
+.mk-split > * {
+  flex: 1 1 20rem;
+  min-width: 0;
+}
+
+.mk-split > .mk-pane + .mk-pane {
+  margin-top: 0;
+}
+
+.mk-stack {
+  display: grid;
+  gap: var(--mk-space);
+}
+
+.mk-list,
+.mk-tree,
+.mk-tabs ul,
+.mk-key-hints ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.mk-list li,
+.mk-tree li,
+.mk-tabs li,
+.mk-key-hints li {
+  margin: 0.2rem 0;
+}
+
+.mk-tree ul,
+.mk-list ul,
+.mk-key-hints ul,
+.mk-tabs ul {
+  margin-top: var(--mk-space);
+}
+
+.mk-list[aria-label],
+.mk-tree[aria-label] {
+  padding-left: 0.25rem;
+}
+
+.mk-tabs ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.75rem;
+}
+
+.mk-tabs a {
+  text-decoration: none;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid transparent;
+  border-radius: 0.35rem;
+  transition: color var(--mk-transition), border-color var(--mk-transition), background-color var(--mk-transition);
+}
+
+.mk-tabs a:hover,
+.mk-tabs a:focus-visible {
+  border-color: var(--mk-color-border);
+  background: var(--mk-color-muted-bg);
+}
+
+.mk-article {
+  overflow-wrap: anywhere;
+}
+
+.mk-status-bar {
+  color: var(--mk-color-text-muted);
+  font-size: var(--mk-font-size-small);
+}
+
+.mk-key-hints {
+  display: flex;
+  align-items: center;
+}
+
+.mk-dialog > summary {
+  cursor: pointer;
+  list-style: revert;
+  outline: none;
+}
+
+kbd {
+  font-family: var(--mk-font-mono);
+  font-size: var(--mk-font-size-small);
+  background: var(--mk-color-muted-bg);
+  border-radius: 0.2rem;
+  border: 1px solid var(--mk-color-border);
+  padding: 0.08rem 0.3rem;
+}
+
+.mk-table {
+  overflow-x: auto;
+}
+
+.mk-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.mk-table th,
+.mk-table td {
+  text-align: left;
+  padding: 0.45rem 0.55rem;
+  border-bottom: 1px solid var(--mk-color-border);
+}
+
+.mk-table th {
+  color: var(--mk-color-text);
+}
+
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible,
+[role="link"]:focus-visible,
+[tabindex]:not([tabindex="-1"]):focus-visible {
+  outline: var(--mk-focus-outline);
+  outline-offset: 0.12rem;
+}
+
+@media (max-width: 64rem) {
+  .mk-screen {
+    gap: var(--mk-space);
+  }
+
+  .mk-split {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .mk-split > .mk-pane + .mk-pane {
+    border-top: 1px solid var(--mk-split-divider);
+    border-left: none;
+  }
+
+  .mk-screen__header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media print {
+  :root {
+    --mk-color-bg: #ffffff;
+    --mk-color-surface: #ffffff;
+    --mk-color-text: #101010;
+    --mk-color-text-muted: #3d3d3d;
+    --mk-color-border: #999999;
+    --mk-color-muted-bg: #ffffff;
+    --mk-color-accent: #000000;
+  }
+
+  body {
+    background: var(--mk-color-bg);
+    color: var(--mk-color-text);
+  }
+
+  .mk-screen,
+  .mk-pane,
+  .mk-status-bar,
+  .mk-tree,
+  .mk-table,
+  .mk-article,
+  .mk-dialog,
+  .mk-list,
+  .mk-key-hints,
+  .mk-tabs {
+    background: none;
+    box-shadow: none;
+  }
+
+  .mk-key-hints {
+    display: none;
+  }
+}
