@@ -48,6 +48,7 @@ pub fn render(
     layout: &str,
     page: &Page,
     markdown: &RenderedMarkdown,
+    keyboard_runtime_enabled: bool,
 ) -> AppResult<String> {
     let mut environment = Environment::new();
     environment.set_auto_escape_callback(|_| minijinja::AutoEscape::Html);
@@ -60,7 +61,13 @@ pub fn render(
             message: error.to_string(),
         })?;
     template.render(context! {
-        site => json!({ "base_url": null, "trailing_slash": "always" }),
+        site => json!({
+            "base_url": null,
+            "trailing_slash": "always",
+            "enhancements": {
+                "keyboard": keyboard_runtime_enabled
+            }
+        }),
         page => json!({ "title": page.metadata.title, "description": page.metadata.description, "layout": page.metadata.layout, "slug": page.metadata.slug, "tags": page.metadata.tags, "projects": page.metadata.projects, "headings": markdown.headings.iter().map(|heading| json!({ "level": heading.level, "id": heading.id, "text": heading.text })).collect::<Vec<_>>(), "links": markdown.links.iter().map(|link| json!({ "url": link.url, "internal": link.internal, "outbound": link.outbound })).collect::<Vec<_>>() }),
         content => Value::from_safe_string(markdown.html.clone()),
         data => {},

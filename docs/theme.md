@@ -6,6 +6,9 @@ mkpage ships a terminal-inspired, static CSS reference theme:
 Copy this file into your project as `static/css/site.css` and link it from your
 layout (for example in `<head>`).
 
+For optional keyboard-first navigation, include `mkpage-keyboard-v1.js` from your
+layout when desired; see [`docs/enhancements.md`](enhancements.md).
+
 The theme uses CSS custom properties prefixed with `--mk-` to keep overrides
 local, predictable, and script-free.
 

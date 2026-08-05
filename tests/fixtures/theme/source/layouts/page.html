@@ -4,20 +4,28 @@
   <meta charset="utf-8">
   <title>{{ page.title }}</title>
   <link rel="stylesheet" href="/css/site.css">
+  {% if site.enhancements.keyboard %}
+  <script
+    type="module"
+    src="/js/mkpage-keyboard-v1.js"
+    data-mkpage-route-shortcuts='{"g h":"/","g p":"/projects/"}'
+    data-mkpage-help-title="Keyboard shortcuts">
+  </script>
+  {% endif %}
 </head>
 <body>
-  <main class="mk-screen">
+  <main class="mk-screen" data-mkpage-widget="screen" data-mkpage-enhance="off">
     <header class="mk-screen__header">
       <h1>{{ page.title }}</h1>
     </header>
     <section class="mk-split">
-      <section class="mk-pane">
+      <section class="mk-pane" data-mkpage-widget="pane" data-mkpage-enhance="off">
         <h2>Content</h2>
         {{ content | safe }}
       </section>
-      <section class="mk-pane">
+      <section class="mk-pane" data-mkpage-widget="pane" data-mkpage-enhance="off">
         <h2>Links</h2>
-        <ul class="mk-list">
+        <ul class="mk-list" data-mkpage-widget="list" data-mkpage-enhance="keyboard">
           <li><a href="/">Home</a></li>
           <li><a href="/projects">Projects</a></li>
         </ul>

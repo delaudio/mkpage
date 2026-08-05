@@ -8,6 +8,7 @@ use std::{
 };
 
 use crate::{
+    enhancements,
     error::{AppError, AppResult},
     markdown::render,
     page::{BuildProfile, parse},
@@ -25,6 +26,7 @@ pub struct BuildRequest {
     pub source_dir: PathBuf,
     pub output_dir: PathBuf,
     pub profile: BuildProfile,
+    pub keyboard_runtime_enabled: bool,
 }
 
 /// Files emitted by a successful build.
@@ -85,6 +87,21 @@ pub fn build_site(request: &BuildRequest) -> AppResult<BuildReport> {
     let asset_root = request.source_dir.join("static");
     let asset_sources = collect_assets(&asset_root)?;
     let mut occupied = BTreeSet::from(["index.html".to_owned()]);
+
+    let mut generated_runtime = None;
+    if request.keyboard_runtime_enabled {
+        let runtime_path = PathBuf::from(enhancements::KEYBOARD_RUNTIME_PATH);
+        let runtime_key = runtime_path.to_string_lossy().to_ascii_lowercase();
+        if !occupied.insert(runtime_key) {
+            return Err(AppError::StaticAssetCollision {
+                page: request.output_dir.join(&runtime_path),
+                asset: runtime_path.clone(),
+                output: request.output_dir.join(runtime_path),
+            });
+        }
+        generated_runtime = Some((runtime_path, enhancements::runtime().as_bytes().to_vec()));
+    }
+
     let mut planned_assets = Vec::new();
     for source in &asset_sources {
         let relative = source
@@ -105,6 +122,9 @@ pub fn build_site(request: &BuildRequest) -> AppResult<BuildReport> {
         })?;
         planned_assets.push((relative, bytes));
     }
+    if let Some((path, bytes)) = generated_runtime {
+        planned_assets.push((path, bytes));
+    }
 
     let output = request.output_dir.join("index.html");
     let rendered = render(&page.body);
@@ -114,6 +134,7 @@ pub fn build_site(request: &BuildRequest) -> AppResult<BuildReport> {
             layout,
             &page,
             &rendered,
+            request.keyboard_runtime_enabled,
         )?,
         None => render_reference_page(&rendered.html, request.profile.shows_draft_marker(&page)),
     };

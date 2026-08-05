@@ -3,15 +3,16 @@
 ## Active state
 
 - **Branch:** main
-- **Active item:** None (waiting for next queued issue).
+- **Active item:** None (no queued implementation item; waiting for next issue).
 - **Blockers:** none.
-- **Uncommitted work:** none.
+- **Uncommitted work:** yes.
 
 ## Last shipped
 
 - d0abe64 — Ship semantic TUI widgets.
 - 3b2dc9b — Implement terminal-themed, responsive reference style system.
+- TODO_SHIP_COMMIT — Ship progressive keyboard enhancements.
 
 ## Next item
 
-- Issue #13 shipped; continue to the next roadmap item in sequence.
+- Next item: waiting for next issue.

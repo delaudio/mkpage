@@ -53,6 +53,7 @@ fn output_path_traversal_is_rejected() {
         source_dir: fixture.source,
         output_dir: fixture.temp.path().join("escape").join("..").join(".."),
         profile: mkpage::page::BuildProfile::production(mkpage::page::calendar_date(2026, 8, 4)),
+        keyboard_runtime_enabled: false,
     })
     .expect_err("traversal should fail");
 

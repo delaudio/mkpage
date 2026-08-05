@@ -5,6 +5,7 @@ pub mod cli;
 pub mod compiler;
 pub mod config;
 pub mod data;
+pub mod enhancements;
 pub mod error;
 pub mod logging;
 pub mod markdown;
@@ -86,6 +87,7 @@ pub mod build {
             source_dir: project.root,
             output_dir: project.paths.output,
             profile: BuildProfile::production(time::OffsetDateTime::now_utc().date()),
+            keyboard_runtime_enabled: project.config.enhancements.keyboard,
         })?;
         if !context.quiet {
             println!(

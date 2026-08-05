@@ -106,6 +106,7 @@ fn build_pipeline_uses_validated_metadata_for_visibility_and_draft_marker() {
         source_dir: source.clone(),
         output_dir: temp.path().join("production"),
         profile: BuildProfile::production(calendar_date(2026, 8, 4)),
+        keyboard_runtime_enabled: false,
     })
     .unwrap();
     assert!(production.generated_files.is_empty());
@@ -114,6 +115,7 @@ fn build_pipeline_uses_validated_metadata_for_visibility_and_draft_marker() {
         source_dir: source,
         output_dir: development_output.clone(),
         profile: BuildProfile::development(calendar_date(2026, 8, 4)),
+        keyboard_runtime_enabled: false,
     })
     .unwrap();
     let html = std::fs::read_to_string(development_output.join("index.html")).unwrap();

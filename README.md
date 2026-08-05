@@ -24,5 +24,8 @@ cargo build --release
 
 The command surface currently reserves `init`, `build`, `dev`, and `serve`.
 
+Optional keyboard-first behavior is documented in `docs/enhancements.md` and is
+enabled with the generated runtime asset.
+
 See [configuration](docs/configuration.md) for `mkpage.toml`, path safety, and
 command precedence.

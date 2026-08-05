@@ -41,13 +41,32 @@ With JavaScript an enhancement layer may apply tab roles, arrow-key movement,
 and selected-state styling, but it must keep the original link targets working.
 Dialog starts as native disclosure. Keyboard users focus the summary and toggle
 it with Enter or Space; pointer and touch users toggle the same summary control.
-Without JavaScript the disclosure remains a standard `details` element. With
-JavaScript an enhancement layer may replace or mirror that disclosure with a
-real modal `<dialog>`, but it must preserve the `details` fallback, use native
-`dialog.showModal()` or equivalent accessible modality, move focus into the
-dialog on open, keep focus within the modal while open, provide a visible close
-control, support Escape close where applicable, return focus to the opener on
-close, and keep the fallback content readable when JavaScript is absent.
+Without JavaScript the disclosure remains a standard `details` element.
+
+## Progressive enhancement protocol
+
+mkpage enhancements apply only where widgets and controls opt-in through
+`data-mkpage-widget` and `data-mkpage-enhance` attributes:
+
+- `data-mkpage-widget` identifies the widget role (`list`, `tree`, `tabs`, etc.).
+- `data-mkpage-enhance="keyboard"` opts the element into keyboard and pointer
+  synchronization.
+- `data-mkpage-enhance="off"` disables all keyboard enhancement for the
+  element and descendants.
+
+```html
+<ul class="mk-list" data-mkpage-widget="list" data-mkpage-enhance="keyboard">
+  <li><a href="/">Home</a></li>
+  <li><a href="/projects">Projects</a></li>
+</ul>
+```
+
+```html
+<details class="mk-dialog" data-mkpage-widget="dialog" data-mkpage-enhance="off">
+  <summary>Help</summary>
+  <div class="mk-dialog__content"><p>Fallback content remains readable.</p></div>
+</details>
+```
 
 ```html
 <nav class="mk-key-hints" aria-label="Keyboard shortcuts"><ul><li><a href="/">Home</a></li></ul></nav>
