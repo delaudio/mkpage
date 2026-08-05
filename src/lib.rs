@@ -5,6 +5,7 @@ pub mod cli;
 pub mod compiler;
 pub mod config;
 pub mod data;
+pub mod dev;
 pub mod enhancements;
 pub mod error;
 pub mod init;
@@ -12,11 +13,13 @@ pub mod logging;
 pub mod markdown;
 pub mod page;
 pub mod routing;
+pub mod serve;
 pub mod template;
 
 use std::path::PathBuf;
 
-use cli::{Cli, Command};
+use cli::Cli;
+use cli::Command;
 use error::AppResult;
 
 /// Shared options resolved before a command handler runs.
@@ -55,8 +58,8 @@ pub fn run(cli: Cli) -> AppResult<()> {
             Ok(())
         }
         Command::Build => build::run(context),
-        Command::Dev => dev::run(context),
-        Command::Serve => serve::run(context),
+        Command::Dev(args) => dev::run(context, args),
+        Command::Serve(args) => serve::run(context, args),
     }
 }
 
@@ -98,27 +101,5 @@ pub mod build {
             );
         }
         Ok(())
-    }
-}
-
-pub mod dev {
-    use super::{
-        CommandContext,
-        error::{AppError, AppResult},
-    };
-
-    pub fn run(_context: CommandContext) -> AppResult<()> {
-        Err(AppError::NotImplemented { command: "dev" })
-    }
-}
-
-pub mod serve {
-    use super::{
-        CommandContext,
-        error::{AppError, AppResult},
-    };
-
-    pub fn run(_context: CommandContext) -> AppResult<()> {
-        Err(AppError::NotImplemented { command: "serve" })
     }
 }

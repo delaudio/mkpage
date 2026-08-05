@@ -34,7 +34,16 @@ Quick start:
 
 ```sh
 mkpage init .
+mkpage dev .
 mkpage build --root .
+mkpage serve --port 3000
 ```
 
+`mkpage dev` builds once, serves `public` on `127.0.0.1:3000` by default, and
+watches `content`, `layouts`, `data`, `static`, and `mkpage.toml` for rebuilds.
+
+`mkpage serve` serves an existing output directory; pass `--host` / `--port` to
+adjust the preview endpoint.
+
 See [docs/init.md](docs/init.md) for starter behavior and next-step guidance.
+See [docs/dev.md](docs/dev.md) for command details.

@@ -33,4 +33,8 @@ cd <directory>
 mkpage build --root .
 ```
 
-Then open `./public` (served by `mkpage serve` in a later issue).
+Then open `./public` with:
+
+```sh
+mkpage serve
+```

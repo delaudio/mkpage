@@ -22,8 +22,8 @@ fn parses_each_command() {
         let actual = match cli.command {
             Command::Init(_) => "init",
             Command::Build => "build",
-            Command::Dev => "dev",
-            Command::Serve => "serve",
+            Command::Dev(_) => "dev",
+            Command::Serve(_) => "serve",
         };
         assert_eq!(actual, expected);
     }
@@ -126,10 +126,10 @@ fn each_command_reaches_its_own_handler() {
             ["mkpage", "build"].as_slice(),
             "could not read configuration",
         ),
-        (["mkpage", "dev"].as_slice(), "dev is not implemented yet"),
+        (["mkpage", "dev"].as_slice(), "could not read configuration"),
         (
             ["mkpage", "serve"].as_slice(),
-            "serve is not implemented yet",
+            "could not read configuration",
         ),
     ] {
         let cli = Cli::try_parse_from(input).expect("command should parse");

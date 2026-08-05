@@ -3,7 +3,7 @@
 ## Active state
 
 - **Branch:** main
-- **Active item:** Issue #16 (development server and live rebuild).
+- **Active item:** Issue #17 (next planned server polish/follow-ups).
 - **Blockers:** none.
 - **Uncommitted work:** yes.
 
@@ -13,6 +13,7 @@
 - 3b2dc9b — Implement terminal-themed, responsive reference style system.
 - e46ca88 — Ship progressive keyboard enhancements.
 - (current) — Implement safe project scaffolding starter.
+-  ? — Ship live development server and local preview commands.
 
 ## Next item
-- Issue #17 after #16 completion.
+- Issue #18.

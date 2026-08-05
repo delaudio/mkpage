@@ -18,3 +18,4 @@
 | [0014](adr/0014-define-responsive-terminal-theme-system.md) | Define responsive terminal theme system | Implemented | 2026-08-05 | theme, css, accessibility, responsiveness, usability |
 | [0015](adr/0015-define-progressive-keyboard-enhancements.md) | Define progressive keyboard enhancement layer | Implemented | 2026-08-05 | enhancement, accessibility, input, javascript, routing |
 | [0016](adr/0016-define-safe-project-scaffolding-starter.md) | Define safe project scaffolding for the default starter | Implemented | 2026-08-05 | scaffolding, starter, dx, init |
+| [0017](adr/0017-define-dev-server-and-live-rebuild.md) | Define a live development server and local preview command | Implemented | 2026-08-05 | dev, serve, watch, localhost |
