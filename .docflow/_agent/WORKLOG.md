@@ -23,4 +23,4 @@ Append one row per commit. Newest entries go at the bottom.
 | 2026-08-05 | 13f4b59 | main | 0012 | Added pane heading-level control and nesting coverage for the widget contract and tests. |
 | 2026-08-05 | 3b2dc9b | main | 0014 | Added terminal theme starter stylesheet, fixture, and theme tests with responsive token coverage. |
 | 2026-08-05 | e243335 | main | 0015 | Implemented optional keyboard enhancement runtime, opt-in widget markers, docs, and enhancement asset emission tests. |
-| 2026-08-05 | 876597b | main | 0016 | Implemented safe project scaffolding (`mkpage init`) with deterministic default template assets and CLI tests. |
+| 2026-08-05 | n/a | main | 0016 | Implemented safe project scaffolding (`mkpage init`) with deterministic default template assets and CLI tests. |

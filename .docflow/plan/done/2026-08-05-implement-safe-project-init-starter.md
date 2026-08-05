@@ -51,4 +51,4 @@ Shipped and validated with:
 - local `cargo fmt`, `cargo clippy --all-targets --all-features`,
   `cargo test --all-targets --all-features`, `cargo build --release`
 
-Shipped at HEAD `876597b`.
+Shipped at HEAD of this commit.
