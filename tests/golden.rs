@@ -9,6 +9,104 @@ use mkpage::{
 use support::{Fixture, assert_golden_tree};
 
 #[test]
+fn builds_all_markdown_content_routes() {
+    let temp = tempfile::tempdir().expect("temp");
+    let source = temp.path().join("source");
+    let content = source.join("content");
+    let layouts = source.join("layouts");
+    let static_root = source.join("static");
+    std::fs::create_dir_all(&content).expect("content");
+    std::fs::create_dir_all(&layouts).expect("layouts");
+    std::fs::create_dir_all(content.join("projects")).expect("projects");
+    std::fs::create_dir_all(static_root.join("css")).expect("static-root");
+
+    std::fs::write(content.join("index.md"), b"# Home\n").expect("index");
+    std::fs::write(
+        content.join("about.md"),
+        b"+++\ntitle = \"About\"\n+++\n# About\n",
+    )
+    .expect("about");
+    std::fs::write(
+        content.join("projects/index.md"),
+        b"+++\ntitle = \"Projects\"\n+++\n# Projects\n",
+    )
+    .expect("projects index");
+    std::fs::write(
+        content.join("projects/mkpage.md"),
+        b"+++\ntitle = \"mkpage\"\n+++\n# Project\n",
+    )
+    .expect("project page");
+    std::fs::write(layouts.join("page.html"), "{{ content | safe }}").expect("layout");
+    std::fs::write(static_root.join("css/site.css"), "body{}\n").expect("css");
+
+    let output = temp.path().join("public");
+    let request = BuildRequest {
+        source_dir: source,
+        output_dir: output.clone(),
+        profile: mkpage::page::BuildProfile::production(mkpage::page::calendar_date(2026, 8, 4)),
+        keyboard_runtime_enabled: false,
+    };
+
+    let report = build_site(&request).expect("build should render all pages");
+    assert_eq!(report.page_count, 4);
+    assert!(
+        report
+            .generated_files
+            .contains(&Path::new("index.html").to_path_buf())
+    );
+    assert!(
+        report
+            .generated_files
+            .contains(&Path::new("about/index.html").to_path_buf())
+    );
+    assert!(
+        report
+            .generated_files
+            .contains(&Path::new("projects/index.html").to_path_buf())
+    );
+    assert!(
+        report
+            .generated_files
+            .contains(&Path::new("projects/mkpage/index.html").to_path_buf())
+    );
+    assert!(report.asset_count >= 1);
+
+    let rendered =
+        std::fs::read_to_string(output.join("projects/mkpage/index.html")).expect("page");
+    assert!(rendered.contains("<h1 id=\"project\">Project</h1>"));
+    assert!(output.join("css/site.css").is_file());
+}
+
+#[test]
+fn keyboard_runtime_rejects_static_collisions() {
+    let temp = tempfile::tempdir().expect("temp");
+    let source = temp.path().join("source");
+    let content = source.join("content");
+    let layouts = source.join("layouts");
+    let static_root = source.join("static");
+    std::fs::create_dir_all(&content).expect("content");
+    std::fs::create_dir_all(&layouts).expect("layouts");
+    std::fs::create_dir_all(static_root.join("js")).expect("static root");
+    std::fs::write(content.join("index.md"), b"# Home\n").expect("index");
+    std::fs::write(layouts.join("page.html"), "{{ content | safe }}").expect("layout");
+    std::fs::write(
+        static_root.join("js/mkpage-keyboard-v1.js"),
+        "console.log('collision')\n",
+    )
+    .expect("collision asset");
+
+    let request = BuildRequest {
+        source_dir: source,
+        output_dir: temp.path().join("public"),
+        profile: mkpage::page::BuildProfile::production(mkpage::page::calendar_date(2026, 8, 4)),
+        keyboard_runtime_enabled: true,
+    };
+
+    let error = build_site(&request).expect_err("runtime collision should fail");
+    assert!(matches!(error, AppError::StaticAssetCollision { .. }));
+}
+
+#[test]
 fn minimal_fixture_matches_checked_in_output() {
     let fixture = Fixture::copy("minimal");
     let report = build_site(&fixture.request()).expect("minimal fixture should build");

@@ -1,4 +1,4 @@
-//! Minimal deterministic build entry point used by the fixture harness.
+//! Deterministic static-site build entry point.
 
 use std::{
     collections::BTreeSet,
@@ -8,10 +8,11 @@ use std::{
 };
 
 use crate::{
-    enhancements,
+    assets, enhancements,
     error::{AppError, AppResult},
     markdown::render,
     page::{BuildProfile, parse},
+    routing::discover,
     template::render as render_template,
 };
 use serde::Serialize;
@@ -45,6 +46,7 @@ struct OutputManifest {
     owner: &'static str,
     files: Vec<ManifestEntry>,
 }
+
 #[derive(Debug, Clone, Serialize, PartialEq, Eq)]
 struct ManifestEntry {
     path: PathBuf,
@@ -53,103 +55,104 @@ struct ManifestEntry {
     sha256: String,
 }
 
-/// Builds the minimal reference fixture into a deterministic HTML document.
-///
-/// This is intentionally narrow: routing, frontmatter, Markdown rendering,
-/// templates, and assets are introduced by their dedicated capabilities.
+/// Build all markdown content pages into deterministic output files.
 pub fn build_site(request: &BuildRequest) -> AppResult<BuildReport> {
     let started = Instant::now();
     validate_output_path(&request.source_dir, &request.output_dir)?;
 
-    let source = request.source_dir.join("content").join("index.md");
-    let content = fs::read(&source).map_err(|error| AppError::SourceRead {
-        path: source.clone(),
-        message: error.to_string(),
-    })?;
+    let source_root = request.source_dir.join("content");
+    let candidates = discover(&source_root, &request.output_dir)?;
+    let layouts_root = request.source_dir.join("layouts");
 
-    if content.starts_with(b"!invalid!") {
-        return Err(AppError::InvalidFixture {
-            path: source,
-            message: "fixture starts with the reserved !invalid! marker".into(),
-        });
-    }
-    let page = parse(&source, &content)?;
-    if !request.profile.includes(&page) {
-        return Ok(BuildReport {
-            generated_files: vec![],
-            page_count: 0,
-            asset_count: 0,
-            output_dir: request.output_dir.clone(),
-            elapsed: started.elapsed(),
-        });
+    let mut planned_pages = Vec::new();
+    for candidate in candidates {
+        if candidate
+            .source
+            .extension()
+            .and_then(|value| value.to_str())
+            != Some("md")
+        {
+            continue;
+        }
+
+        let source = candidate.source;
+        let bytes = fs::read(&source).map_err(|error| AppError::SourceRead {
+            path: source.clone(),
+            message: error.to_string(),
+        })?;
+
+        if bytes.starts_with(b"!invalid!") {
+            return Err(AppError::InvalidFixture {
+                path: source,
+                message: "fixture starts with the reserved !invalid! marker".into(),
+            });
+        }
+
+        let page = parse(&source, &bytes)?;
+        if !request.profile.includes(&page) {
+            continue;
+        }
+
+        let rendered = render(&page.body);
+        let document = match page.metadata.layout.as_deref() {
+            Some(layout) => render_template(
+                &layouts_root,
+                layout,
+                &page,
+                &rendered,
+                request.keyboard_runtime_enabled,
+            )?,
+            None => {
+                render_reference_page(&rendered.html, request.profile.shows_draft_marker(&page))
+            }
+        };
+
+        let relative_output = candidate
+            .output
+            .as_path()
+            .strip_prefix(&request.output_dir)
+            .map_err(|error| AppError::OutputWrite {
+                path: request.output_dir.clone(),
+                message: error.to_string(),
+            })?
+            .to_path_buf();
+        planned_pages.push((relative_output, document.into_bytes()));
     }
 
     let asset_root = request.source_dir.join("static");
-    let asset_sources = collect_assets(&asset_root)?;
-    let mut occupied = BTreeSet::from(["index.html".to_owned()]);
+    let mut generated_files = planned_pages
+        .iter()
+        .map(|(path, _)| path.clone())
+        .collect::<Vec<_>>();
 
-    let mut generated_runtime = None;
+    let mut runtime = None;
     if request.keyboard_runtime_enabled {
         let runtime_path = PathBuf::from(enhancements::KEYBOARD_RUNTIME_PATH);
-        let runtime_key = runtime_path.to_string_lossy().to_ascii_lowercase();
-        if !occupied.insert(runtime_key) {
+        let generated_path = runtime_path.to_string_lossy().to_ascii_lowercase();
+        if generated_files
+            .iter()
+            .map(|path| path.to_string_lossy().to_ascii_lowercase())
+            .any(|path| path == generated_path)
+        {
             return Err(AppError::StaticAssetCollision {
                 page: request.output_dir.join(&runtime_path),
                 asset: runtime_path.clone(),
                 output: request.output_dir.join(runtime_path),
             });
         }
-        generated_runtime = Some((runtime_path, enhancements::runtime().as_bytes().to_vec()));
+        generated_files.push(runtime_path.clone());
+        runtime = Some((runtime_path, enhancements::runtime().as_bytes().to_vec()));
     }
 
-    let mut planned_assets = Vec::new();
-    for source in &asset_sources {
-        let relative = source
-            .strip_prefix(&asset_root)
-            .expect("asset under root")
-            .to_path_buf();
-        let key = relative.to_string_lossy().to_ascii_lowercase();
-        if !occupied.insert(key) {
-            return Err(AppError::StaticAssetCollision {
-                page: request.output_dir.join(&relative),
-                asset: source.clone(),
-                output: request.output_dir.join(relative),
-            });
-        }
-        let bytes = fs::read(source).map_err(|error| AppError::SourceRead {
-            path: source.clone(),
-            message: error.to_string(),
-        })?;
-        planned_assets.push((relative, bytes));
-    }
-    if let Some((path, bytes)) = generated_runtime {
-        planned_assets.push((path, bytes));
-    }
+    let copied_assets = assets::copy(&asset_root, &request.output_dir, &generated_files)?;
+    generated_files.extend(copied_assets);
 
-    let output = request.output_dir.join("index.html");
-    let rendered = render(&page.body);
-    let document = match page.metadata.layout.as_deref() {
-        Some(layout) => render_template(
-            &request.source_dir.join("layouts"),
-            layout,
-            &page,
-            &rendered,
-            request.keyboard_runtime_enabled,
-        )?,
-        None => render_reference_page(&rendered.html, request.profile.shows_draft_marker(&page)),
-    };
-    let document_bytes = document.into_bytes();
     fs::create_dir_all(&request.output_dir).map_err(|error| AppError::OutputWrite {
         path: request.output_dir.clone(),
         message: error.to_string(),
     })?;
-    fs::write(&output, &document_bytes).map_err(|error| AppError::OutputWrite {
-        path: output.clone(),
-        message: error.to_string(),
-    })?;
 
-    let mut generated_files = vec![PathBuf::from("index.html")];
-    for (relative, bytes) in planned_assets {
+    for (relative, bytes) in planned_pages {
         let destination = request.output_dir.join(&relative);
         if let Some(parent) = destination.parent() {
             fs::create_dir_all(parent).map_err(|error| AppError::OutputWrite {
@@ -161,10 +164,26 @@ pub fn build_site(request: &BuildRequest) -> AppResult<BuildReport> {
             path: destination,
             message: error.to_string(),
         })?;
-        generated_files.push(relative);
     }
+
+    if let Some((path, bytes)) = runtime {
+        let destination = request.output_dir.join(&path);
+        if let Some(parent) = destination.parent() {
+            fs::create_dir_all(parent).map_err(|error| AppError::OutputWrite {
+                path: parent.to_path_buf(),
+                message: error.to_string(),
+            })?;
+        }
+        fs::write(&destination, bytes).map_err(|error| AppError::OutputWrite {
+            path: destination,
+            message: error.to_string(),
+        })?;
+    }
+
     generated_files.sort();
+    generated_files.dedup();
     remove_stale_managed(&request.output_dir, &generated_files)?;
+
     let mut manifest_files = Vec::new();
     for path in &generated_files {
         let target = request.output_dir.join(path);
@@ -193,6 +212,7 @@ pub fn build_site(request: &BuildRequest) -> AppResult<BuildReport> {
             })?),
         });
     }
+
     let manifest = OutputManifest {
         version: MANIFEST_VERSION,
         owner: "mkpage",
@@ -206,10 +226,23 @@ pub fn build_site(request: &BuildRequest) -> AppResult<BuildReport> {
             message: error.to_string(),
         }
     })?;
-    let asset_count = asset_sources.len();
+
+    let page_count = generated_files
+        .iter()
+        .filter(|path| {
+            path.extension()
+                .is_some_and(|extension| extension == "html")
+        })
+        .count();
+    let asset_count = generated_files
+        .iter()
+        .filter(|path| path.extension().is_none_or(|extension| extension != "html"))
+        .count()
+        .saturating_sub(usize::from(request.keyboard_runtime_enabled));
+
     Ok(BuildReport {
         generated_files,
-        page_count: 1,
+        page_count,
         asset_count,
         output_dir: request.output_dir.clone(),
         elapsed: started.elapsed(),
@@ -220,37 +253,6 @@ fn sha256(bytes: &[u8]) -> String {
     format!("{:x}", Sha256::digest(bytes))
 }
 
-fn collect_assets(root: &Path) -> AppResult<Vec<PathBuf>> {
-    if !root.exists() {
-        return Ok(vec![]);
-    }
-    let mut files = Vec::new();
-    fn visit(path: &Path, files: &mut Vec<PathBuf>) -> AppResult<()> {
-        for entry in fs::read_dir(path).map_err(|error| AppError::SourceRead {
-            path: path.to_path_buf(),
-            message: error.to_string(),
-        })? {
-            let path = entry
-                .map_err(|error| AppError::SourceRead {
-                    path: path.to_path_buf(),
-                    message: error.to_string(),
-                })?
-                .path();
-            if path.is_symlink() {
-                continue;
-            }
-            if path.is_dir() {
-                visit(&path, files)?
-            } else {
-                files.push(path)
-            }
-        }
-        Ok(())
-    }
-    visit(root, &mut files)?;
-    files.sort();
-    Ok(files)
-}
 fn remove_stale_managed(output: &Path, current: &[PathBuf]) -> AppResult<()> {
     let manifest_path = output.join(MANIFEST_FILE);
     let Ok(text) = fs::read_to_string(&manifest_path) else {

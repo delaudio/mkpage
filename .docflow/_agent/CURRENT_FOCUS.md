@@ -3,7 +3,7 @@
 ## Active state
 
 - **Branch:** main
-- **Active item:** Issue #19.
+- **Active item:** none.
 - **Blockers:** none.
 - **Uncommitted work:** no.
 
@@ -14,7 +14,8 @@
 - e46ca88 — Ship progressive keyboard enhancements.
 - b886060 — Implement safe project scaffolding starter.
 - 3737d27 — Ship live development server and local preview commands.
-- HEAD — Improve local preview server response behavior.
+- bc0459b — Improve local preview server response behavior.
+- HEAD — Implement route-based multi-page markdown generation.
 
 ## Next item
-- Issue #19.
+- none.
