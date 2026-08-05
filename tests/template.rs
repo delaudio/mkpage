@@ -52,10 +52,13 @@ fn widget_macros_render_a_semantic_complete_layout() {
         layouts.join("widgets.jinja"),
     )
     .unwrap();
-    fs::write(layouts.join("page.html"), "{% from 'widgets.jinja' import screen, pane, split, stack, list, tree, table, tabs, article, status_bar, key_hints, dialog %}{% call screen('Site', 'ready') %}{% call pane('Projects') %}{% call split() %}{% call stack() %}{% call list('Projects', true) %}<li><a href='/projects'>Projects</a></li>{% endcall %}{% endcall %}{% endcall %}{% endcall %}{% call tree('Navigation') %}<li><a href='/'>Home</a></li>{% endcall %}{% call table('Data') %}<tr><th>Key</th></tr>{% endcall %}{% call tabs() %}<li><a href='#main'>Main</a></li>{% endcall %}{% call article('main') %}<p>Text</p>{% endcall %}{% call status_bar() %}ready{% endcall %}{% call key_hints() %}<li><a href='/'>Home</a></li>{% endcall %}{% call dialog('Help') %}<p>Help</p>{% endcall %}{% endcall %}").unwrap();
+    fs::write(layouts.join("page.html"), "{% from 'widgets.jinja' import screen, pane, split, stack, list, tree, table, tabs, article, status_bar, key_hints, dialog %}{% call screen('Site', 'ready') %}{% call pane('Projects') %}{% call split() %}{% call stack() %}{% call list('Projects', true) %}<li><a href='/projects'>Projects</a></li>{% endcall %}{% call pane('Nested', '', 3) %}<p>Nested body</p>{% endcall %}{% endcall %}{% endcall %}{% endcall %}{% call tree('Navigation') %}<li><a href='/'>Home</a></li>{% endcall %}{% call table('Data') %}<tr><th>Key</th></tr>{% endcall %}{% call tabs() %}<li><a href='#main'>Main</a></li>{% endcall %}{% call article('main') %}<p>Text</p>{% endcall %}{% call status_bar() %}ready{% endcall %}{% call key_hints() %}<li><a href='/'>Home</a></li>{% endcall %}{% call dialog('Help') %}<p>Help</p>{% endcall %}{% endcall %}").unwrap();
     let page = parse("content/index.md".as_ref(), b"body").unwrap();
     let output = render(&layouts, "page", &page, &render_markdown(&page.body)).unwrap();
     assert!(output.contains("<section class=\"mk-pane\"><h2>Projects</h2>"));
+    assert!(
+        output.contains("<section class=\"mk-pane\"><h3>Nested</h3><p>Nested body</p></section>")
+    );
     assert!(output.contains("<nav class=\"mk-key-hints\" aria-label=\"Keyboard shortcuts\"><ul>"));
     assert!(output.contains("<a href='/projects'>Projects</a>"));
     assert!(output.contains("<ol class=\"mk-list\" aria-label=\"Projects\">"));
