@@ -26,4 +26,5 @@ Append one row per commit. Newest entries go at the bottom.
 | 2026-08-05 | b886060 | main | 0016 | Implemented safe project scaffolding (`mkpage init`) with deterministic default template assets and CLI tests. |
 | 2026-08-05 | 3737d27 | main | 0017 | Implemented `mkpage dev` and `mkpage serve`, including local watch/rebuild loop, file serving behavior, and tests/docs. |
 | 2026-08-05 | bc0459b | main | 0018 | Improved local preview serve/response behavior (`Allow` header, `HEAD` semantics, and regression tests). |
-| 2026-08-05 | HEAD | main | 0019 | Implemented route-based multi-page markdown build and collision-safe tests across discovered routes. |
+| 2026-08-05 | 64efeb2 | main | 0019 | Implemented route-based multi-page markdown build and collision-safe tests across discovered routes. |
+| 2026-08-05 | 5cb1e64 | main | 0020 | Added optional site artifact generation (`metadata.json`, `feed.xml`, `sitemap.xml`) behind config flags. |
