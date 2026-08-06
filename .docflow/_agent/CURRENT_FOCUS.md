@@ -19,7 +19,9 @@
 - 5cb1e64 — Add optional site artifact generation (`metadata.json`, `feed.xml`, `sitemap.xml`).
 - 88e45d1 — Generate static search index and integrate with command palette.
 - f61c9a2 — Add accessibility, HTML, SEO, payload, and safety release gates.
-- a0ce6b9 — Publish cross-platform binaries, shell completions, crate metadata, and installation documentation.
+- ee1c13e — Publish cross-platform binaries, shell completions, crate metadata, and installation documentation.
+- 89a1c2d — Dogfood federicodelgaudio.com migration and prepare v0.1 release candidate notes.
+
 
 
 

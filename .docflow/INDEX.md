@@ -24,6 +24,8 @@
 | [0020](adr/0020-generate-static-search-index-and-palette-integration.md) | Generate static search index and integrate with command palette | Implemented | 2026-08-06 | content, search, web-ui, enhancements, javascript |
 | [0021](adr/0021-add-conformance-and-quality-release-gates.md) | Add accessibility, HTML, SEO, payload, and output-safety conformance release gates | Implemented | 2026-08-06 | core, testing, conformance, security, accessibility, quality |
 | [0022](adr/0022-publish-cross-platform-binaries-and-distribution.md) | Publish cross-platform binaries, shell completions, crate metadata, and installation documentation | Implemented | 2026-08-06 | dx, release, publishing, metadata, completions, CI |
+| [0023](adr/0023-dogfood-migration-and-v0-1-release-candidate.md) | Dogfood mkpage by migrating personal site federicodelgaudio.com and cut v0.1 release candidate | Implemented | 2026-08-06 | dogfood, release, migration, v0.1, product |
+
 
 
 

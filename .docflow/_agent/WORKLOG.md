@@ -31,7 +31,9 @@ Append one row per commit. Newest entries go at the bottom.
 | 2026-08-05 | e900aa7 | main | 0020 | Updated plan completion record with shipped commit hash. |
 | 2026-08-06 | 88e45d1 | main | 0020 | Generated static search index (`search_index.json`) and integrated lazy search with command palette. |
 | 2026-08-06 | f61c9a2 | main | 0021 | Added accessibility, HTML, SEO, link, payload, and safety release gates (`tests/conformance.rs`). |
-| 2026-08-06 | a0ce6b9 | main | 0022 | Published crate metadata, `mkpage completions <shell>`, release workflow, and installation documentation. |
+| 2026-08-06 | ee1c13e | main | 0022 | Published crate metadata, `mkpage completions <shell>`, release workflow, and installation documentation. |
+| 2026-08-06 | 89a1c2d | main | 0023 | Dogfooded federicodelgaudio.com site migration and prepared v0.1 release candidate notes. |
+
 
 
 
