@@ -18,7 +18,9 @@
 - 64efeb2 — Implement route-based multi-page markdown generation.
 - 5cb1e64 — Add optional site artifact generation (`metadata.json`, `feed.xml`, `sitemap.xml`).
 - 88e45d1 — Generate static search index and integrate with command palette.
-- 94bd399 — Add accessibility, HTML, SEO, payload, and safety release gates.
+- f61c9a2 — Add accessibility, HTML, SEO, payload, and safety release gates.
+- a0ce6b9 — Publish cross-platform binaries, shell completions, crate metadata, and installation documentation.
+
 
 
 

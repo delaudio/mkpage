@@ -6,11 +6,14 @@ rust-version = "1.85"
 description = "A static-site generator for terminal-minded websites"
 license = "MIT"
 repository = "https://github.com/delaudio/mkpage"
+documentation = "https://github.com/delaudio/mkpage#readme"
+readme = "README.md"
 keywords = ["static-site-generator", "tui", "cli", "rust"]
 categories = ["command-line-utilities", "web-programming"]
 
 [dependencies]
 clap = { version = "4.5", features = ["derive"] }
+clap_complete = "4.5"
 minijinja = "2.16"
 pulldown-cmark = "0.12"
 serde = { version = "1.0", features = ["derive"] }

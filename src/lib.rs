@@ -60,6 +60,12 @@ pub fn run(cli: Cli) -> AppResult<()> {
         Command::Build => build::run(context),
         Command::Dev(args) => dev::run(context, args),
         Command::Serve(args) => serve::run(context, args),
+        Command::Completions(args) => {
+            use clap::CommandFactory;
+            let mut cmd = Cli::command();
+            clap_complete::generate(args.shell, &mut cmd, "mkpage", &mut std::io::stdout());
+            Ok(())
+        }
     }
 }
 

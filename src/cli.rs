@@ -40,6 +40,8 @@ pub enum Command {
     Dev(Dev),
     /// Serve an existing generated site locally.
     Serve(Serve),
+    /// Generate shell completion scripts.
+    Completions(Completions),
 }
 
 #[derive(Debug, Args)]
@@ -77,4 +79,11 @@ pub struct Serve {
     /// Preview port.
     #[arg(short, long, default_value_t = 3000)]
     pub port: u16,
+}
+
+#[derive(Debug, Args)]
+pub struct Completions {
+    /// Target shell for completion generation (bash, zsh, fish, powershell, elvish).
+    #[arg(value_name = "SHELL")]
+    pub shell: clap_complete::Shell,
 }

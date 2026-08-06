@@ -17,6 +17,7 @@ fn parses_each_command() {
         (["mkpage", "build"].as_slice(), "build"),
         (["mkpage", "dev"].as_slice(), "dev"),
         (["mkpage", "serve"].as_slice(), "serve"),
+        (["mkpage", "completions", "bash"].as_slice(), "completions"),
     ] {
         let cli = Cli::try_parse_from(input).expect("command should parse");
         let actual = match cli.command {
@@ -24,9 +25,17 @@ fn parses_each_command() {
             Command::Build => "build",
             Command::Dev(_) => "dev",
             Command::Serve(_) => "serve",
+            Command::Completions(_) => "completions",
         };
         assert_eq!(actual, expected);
     }
+}
+
+#[test]
+fn completions_subcommand_runs_successfully() {
+    let cli =
+        Cli::try_parse_from(["mkpage", "completions", "zsh"]).expect("completions should parse");
+    assert!(mkpage::run(cli).is_ok());
 }
 
 #[test]
