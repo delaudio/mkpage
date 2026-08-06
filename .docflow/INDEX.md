@@ -22,4 +22,6 @@
 | [0018](adr/0018-improve-local-preview-server-response-behavior.md) | Improve local preview server response behavior | Implemented | 2026-08-05 | dev, serve, http, testing |
 | [0019](adr/0019-implement-route-based-multi-page-markdown-generation.md) | Implement route-based multi-page markdown generation | Implemented | 2026-08-05 | compiler, routing, build, testing |
 | [0020](adr/0020-generate-static-search-index-and-palette-integration.md) | Generate static search index and integrate with command palette | Implemented | 2026-08-06 | content, search, web-ui, enhancements, javascript |
+| [0021](adr/0021-add-conformance-and-quality-release-gates.md) | Add accessibility, HTML, SEO, payload, and output-safety conformance release gates | Implemented | 2026-08-06 | core, testing, conformance, security, accessibility, quality |
+
 
