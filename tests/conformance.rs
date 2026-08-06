@@ -30,12 +30,14 @@ fn default_starter_passes_accessibility_html_and_seo_conformance() {
     )
     .expect("init starter should succeed");
 
-    let mut site_config = Site::default();
-    site_config.include_metadata = true;
-    site_config.include_feed = true;
-    site_config.include_sitemap = true;
-    site_config.include_search = true;
-    site_config.base_url = Some("https://federicodelgaudio.com".into());
+    let site_config = Site {
+        include_metadata: true,
+        include_feed: true,
+        include_sitemap: true,
+        include_search: true,
+        base_url: Some("https://federicodelgaudio.com".into()),
+        ..Default::default()
+    };
 
     let request = BuildRequest {
         source_dir: project_dir.clone(),
