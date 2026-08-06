@@ -29,3 +29,5 @@ Append one row per commit. Newest entries go at the bottom.
 | 2026-08-05 | 64efeb2 | main | 0019 | Implemented route-based multi-page markdown build and collision-safe tests across discovered routes. |
 | 2026-08-05 | 5cb1e64 | main | 0020 | Added optional site artifact generation (`metadata.json`, `feed.xml`, `sitemap.xml`) behind config flags. |
 | 2026-08-05 | e900aa7 | main | 0020 | Updated plan completion record with shipped commit hash. |
+| 2026-08-06 | 939c989 | main | 0020 | Generated static search index (`search_index.json`) and integrated lazy search with command palette. |
+

@@ -21,3 +21,5 @@
 | [0017](adr/0017-define-dev-server-and-live-rebuild.md) | Define a live development server and local preview command | Implemented | 2026-08-05 | dev, serve, watch, localhost |
 | [0018](adr/0018-improve-local-preview-server-response-behavior.md) | Improve local preview server response behavior | Implemented | 2026-08-05 | dev, serve, http, testing |
 | [0019](adr/0019-implement-route-based-multi-page-markdown-generation.md) | Implement route-based multi-page markdown generation | Implemented | 2026-08-05 | compiler, routing, build, testing |
+| [0020](adr/0020-generate-static-search-index-and-palette-integration.md) | Generate static search index and integrate with command palette | Implemented | 2026-08-06 | content, search, web-ui, enhancements, javascript |
+

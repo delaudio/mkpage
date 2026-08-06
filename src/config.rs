@@ -43,6 +43,7 @@ pub struct Site {
     pub include_metadata: bool,
     pub include_feed: bool,
     pub include_sitemap: bool,
+    pub include_search: bool,
 }
 
 #[derive(Debug, Clone, Default, Deserialize, PartialEq, Eq)]
@@ -92,6 +93,7 @@ impl Default for Site {
             include_metadata: false,
             include_feed: false,
             include_sitemap: false,
+            include_search: false,
         }
     }
 }

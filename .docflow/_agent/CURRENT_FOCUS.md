@@ -5,7 +5,7 @@
 - **Branch:** main
 - **Active item:** none.
 - **Blockers:** none.
-- **Uncommitted work:** no.
+- **Uncommitted work:** yes.
 
 ## Last shipped
 
@@ -17,6 +17,8 @@
 - bc0459b — Improve local preview server response behavior.
 - 64efeb2 — Implement route-based multi-page markdown generation.
 - 5cb1e64 — Add optional site artifact generation (`metadata.json`, `feed.xml`, `sitemap.xml`).
+- 939c989 — Generate static search index and integrate with command palette.
+
 
 ## Next item
 - none.

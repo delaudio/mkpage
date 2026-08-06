@@ -78,9 +78,34 @@ struct MetadataPage {
     canonical_url: Option<String>,
 }
 
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+pub struct SearchIndex {
+    pub version: &'static str,
+    pub entries: Vec<SearchEntry>,
+}
+
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+pub struct SearchEntry {
+    pub url: String,
+    pub title: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
+    pub section: String,
+    pub tags: Vec<String>,
+    pub content: String,
+    pub headings: Vec<SearchHeading>,
+}
+
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+pub struct SearchHeading {
+    pub id: String,
+    pub text: String,
+}
+
 #[derive(Debug, Clone)]
 struct RenderedPage {
     page: MetadataPage,
+    search_entry: SearchEntry,
 }
 
 /// Build all markdown content pages into deterministic output files.
@@ -133,6 +158,30 @@ pub fn build_site(request: &BuildRequest) -> AppResult<BuildReport> {
             })?
             .to_path_buf();
 
+        let section = route
+            .trim_matches('/')
+            .split('/')
+            .next()
+            .unwrap_or("")
+            .to_owned();
+
+        let search_entry = SearchEntry {
+            url: route.clone(),
+            title: page.metadata.title.clone().unwrap_or_else(|| route.clone()),
+            description: page.metadata.description.clone(),
+            section,
+            tags: page.metadata.tags.clone(),
+            content: rendered.summary.clone(),
+            headings: rendered
+                .headings
+                .iter()
+                .map(|h| SearchHeading {
+                    id: h.id.clone(),
+                    text: h.text.clone(),
+                })
+                .collect(),
+        };
+
         let rendered_metadata = RenderedPage {
             page: MetadataPage {
                 route: route.clone(),
@@ -145,6 +194,7 @@ pub fn build_site(request: &BuildRequest) -> AppResult<BuildReport> {
                 layout: page.metadata.layout.clone(),
                 canonical_url: page.metadata.canonical_url.clone(),
             },
+            search_entry,
         };
 
         let document = match page.metadata.layout.as_deref() {
@@ -205,8 +255,8 @@ pub fn build_site(request: &BuildRequest) -> AppResult<BuildReport> {
         page_metadata.sort_by(|left, right| left.route.cmp(&right.route));
     }
 
-    for (relative, bytes, _rendered_page) in planned_pages {
-        let destination = request.output_dir.join(&relative);
+    for (relative, bytes, _rendered_page) in &planned_pages {
+        let destination = request.output_dir.join(relative);
         if let Some(parent) = destination.parent() {
             fs::create_dir_all(parent).map_err(|error| AppError::OutputWrite {
                 path: parent.to_path_buf(),
@@ -215,6 +265,27 @@ pub fn build_site(request: &BuildRequest) -> AppResult<BuildReport> {
         }
         fs::write(&destination, bytes).map_err(|error| AppError::OutputWrite {
             path: destination,
+            message: error.to_string(),
+        })?;
+    }
+
+    if request.site.include_search {
+        let mut entries: Vec<SearchEntry> = planned_pages
+            .iter()
+            .map(|(_, _, rendered)| rendered.search_entry.clone())
+            .collect();
+        entries.sort_by(|left, right| left.url.cmp(&right.url));
+        let search_index = SearchIndex {
+            version: "1",
+            entries,
+        };
+        generated_files.push(PathBuf::from("search_index.json"));
+        fs::write(
+            request.output_dir.join("search_index.json"),
+            serde_json::to_vec_pretty(&search_index).expect("search index serialization"),
+        )
+        .map_err(|error| AppError::OutputWrite {
+            path: request.output_dir.join("search_index.json"),
             message: error.to_string(),
         })?;
     }

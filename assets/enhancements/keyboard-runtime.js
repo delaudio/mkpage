@@ -291,10 +291,14 @@
     });
   }
 
+  const PALETTE_ID = "mkpage-command-palette-dialog";
+  /** @type {Array<{url: string, title: string, description?: string, section?: string, tags?: string[], content?: string, headings?: Array<{id: string, text: string}>}> | null} */
+  let searchIndexCache = null;
+
   function openCommandPalette() {
-    const node = document.querySelector("[data-mkpage-command-palette]");
-    if (node && "focus" in node) {
-      node.focus();
+    const existingNode = document.querySelector("[data-mkpage-command-palette]");
+    if (existingNode && "focus" in existingNode) {
+      existingNode.focus();
       return;
     }
 
@@ -311,15 +315,116 @@
       return;
     }
 
-    let help = document.getElementById(HELP_ID);
-    if (!help) {
-      help = document.createElement("aside");
-      help.id = HELP_ID;
-      help.setAttribute("role", "status");
-      document.body.appendChild(help);
+    let dialog = document.getElementById(PALETTE_ID);
+    if (!dialog) {
+      dialog = document.createElement("dialog");
+      dialog.id = PALETTE_ID;
+      dialog.className = "mkpage-command-palette-dialog";
+      dialog.setAttribute("aria-label", "Command Palette and Search");
+      dialog.innerHTML = `
+        <div style="padding: 1rem; max-width: 32rem; margin: auto;">
+          <input type="search" id="mkpage-search-input" placeholder="Search site content..." aria-label="Search site content" style="width: 100%; padding: 0.5rem; border-radius: 0.25rem; border: 1px solid #4b5563; background: #1f2937; color: #f3f4f6; margin-bottom: 0.75rem;" />
+          <div id="mkpage-search-status" role="status" aria-live="polite" style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0;"></div>
+          <div id="mkpage-search-results-container" data-mkpage-widget="list" data-mkpage-enhance="keyboard">
+            <ul id="mkpage-search-results-list" style="list-style: none; padding: 0; margin: 0;"></ul>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(dialog);
+
+      const input = dialog.querySelector("#mkpage-search-input");
+      if (input) {
+        input.addEventListener("input", onSearchInput);
+      }
     }
-    help.textContent = "Add a control with [data-mkpage-command-palette] to attach command palette input.";
-    showTransientMessage(help);
+
+    if (typeof dialog.showModal === "function") {
+      dialog.showModal();
+    }
+    const inputNode = dialog.querySelector("#mkpage-search-input");
+    if (inputNode) {
+      inputNode.focus();
+    }
+
+    ensureSearchIndexLoaded().then(() => {
+      onSearchInput();
+    });
+  }
+
+  async function ensureSearchIndexLoaded() {
+    if (searchIndexCache !== null) {
+      return searchIndexCache;
+    }
+    try {
+      const response = await fetch("/search_index.json");
+      if (!response.ok) {
+        searchIndexCache = [];
+        return [];
+      }
+      const data = await response.json();
+      searchIndexCache = Array.isArray(data.entries) ? data.entries : [];
+    } catch {
+      searchIndexCache = [];
+    }
+    return searchIndexCache;
+  }
+
+  function onSearchInput() {
+    const dialog = document.getElementById(PALETTE_ID);
+    if (!dialog) return;
+    const input = dialog.querySelector("#mkpage-search-input");
+    const list = dialog.querySelector("#mkpage-search-results-list");
+    const status = dialog.querySelector("#mkpage-search-status");
+    if (!input || !list || !status) return;
+
+    const query = input.value.trim().toLowerCase();
+    const entries = searchIndexCache || [];
+
+    if (!query) {
+      const routeRows = config.routeShortcuts
+        .map(
+          (entry) =>
+            `<li style="margin-bottom: 0.5rem;"><a href="${escapeHtml(entry.href)}" style="color: #60a5fa; text-decoration: none;"><strong>${escapeHtml(entry.keys.join(" "))}</strong> → ${escapeHtml(entry.title)}</a></li>`
+        )
+        .join("");
+      list.innerHTML = routeRows ? routeRows : `<li style="color: #9ca3af;">Type to search pages and writing...</li>`;
+      status.textContent = "Showing quick route shortcuts.";
+      return;
+    }
+
+    const scored = entries
+      .map((entry) => ({ entry, score: scoreSearchEntry(entry, query) }))
+      .filter((item) => item.score > 0)
+      .sort((a, b) => b.score - a.score || a.entry.title.localeCompare(b.entry.title));
+
+    if (scored.length === 0) {
+      list.innerHTML = `<li style="color: #9ca3af; padding: 0.5rem 0;">No results found for "${escapeHtml(query)}"</li>`;
+      status.textContent = `No results found for "${query}"`;
+      return;
+    }
+
+    status.textContent = `${scored.length} result${scored.length === 1 ? "" : "s"} found for "${query}"`;
+    list.innerHTML = scored
+      .map(({ entry }) => {
+        const desc = entry.description ? `<span style="color: #9ca3af; font-size: 0.875rem;"> — ${escapeHtml(entry.description)}</span>` : "";
+        return `<li style="margin-bottom: 0.5rem;"><a href="${escapeHtml(entry.url)}" style="color: #60a5fa; text-decoration: none;"><strong>${escapeHtml(entry.title)}</strong>${desc}</a></li>`;
+      })
+      .join("");
+  }
+
+  function scoreSearchEntry(entry, query) {
+    const title = (entry.title || "").toLowerCase();
+    const desc = (entry.description || "").toLowerCase();
+    const content = (entry.content || "").toLowerCase();
+    const tags = Array.isArray(entry.tags) ? entry.tags.map((t) => t.toLowerCase()) : [];
+
+    if (title === query) return 100;
+    if (title.startsWith(query)) return 90;
+    if (title.includes(query)) return 80;
+    if (tags.some((tag) => tag.includes(query))) return 70;
+    if (desc.includes(query)) return 50;
+    if (content.includes(query)) return 20;
+    return 0;
   }
 
   function toggleHelp() {
@@ -375,6 +480,10 @@
     const help = document.getElementById(HELP_ID);
     if (help) {
       help.remove();
+    }
+    const palette = document.getElementById(PALETTE_ID);
+    if (palette && palette.open) {
+      palette.close();
     }
   }
 

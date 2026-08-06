@@ -204,9 +204,12 @@ fn site_artifacts_are_created_only_when_enabled() {
     assert!(!request.output_dir.join("feed.xml").exists());
     assert!(!request.output_dir.join("sitemap.xml").exists());
 
+    assert!(!request.output_dir.join("search_index.json").exists());
+
     request.site.include_metadata = true;
     request.site.include_feed = true;
     request.site.include_sitemap = true;
+    request.site.include_search = true;
     request.site.base_url = Some("https://example.com".to_string());
     request.site.trailing_slash = TrailingSlash::Always;
     let report = build_site(&request).unwrap();
@@ -219,6 +222,11 @@ fn site_artifacts_are_created_only_when_enabled() {
     assert!(
         report
             .generated_files
+            .contains(&Path::new("search_index.json").to_path_buf())
+    );
+    assert!(
+        report
+            .generated_files
             .contains(&Path::new("feed.xml").to_path_buf())
     );
     assert!(
@@ -227,12 +235,17 @@ fn site_artifacts_are_created_only_when_enabled() {
             .contains(&Path::new("sitemap.xml").to_path_buf())
     );
     assert!(report.output_dir.join("metadata.json").is_file());
+    assert!(report.output_dir.join("search_index.json").is_file());
     assert!(report.output_dir.join("feed.xml").is_file());
     assert!(report.output_dir.join("sitemap.xml").is_file());
 
     let metadata: Value =
         serde_json::from_slice(&std::fs::read(report.output_dir.join("metadata.json")).unwrap())
             .unwrap();
+    let search_index: Value = serde_json::from_slice(
+        &std::fs::read(report.output_dir.join("search_index.json")).unwrap(),
+    )
+    .unwrap();
     let feed = std::fs::read_to_string(report.output_dir.join("feed.xml")).unwrap();
     let sitemap = std::fs::read_to_string(report.output_dir.join("sitemap.xml")).unwrap();
 
@@ -246,6 +259,12 @@ fn site_artifacts_are_created_only_when_enabled() {
     assert_eq!(pages[0]["route"], "/");
     assert_eq!(pages[0]["path"], "index.html");
     assert_eq!(pages[0]["title"], serde_json::Value::Null);
+
+    assert_eq!(search_index["version"], "1");
+    let entries = search_index["entries"].as_array().unwrap();
+    assert_eq!(entries.len(), 1);
+    assert_eq!(entries[0]["url"], "/");
+    assert!(entries[0]["content"].is_string());
 
     assert!(feed.contains("<link>https://example.com/</link>"));
     assert!(feed.contains("<item>"));
