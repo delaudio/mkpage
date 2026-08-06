@@ -33,6 +33,7 @@ Append one row per commit. Newest entries go at the bottom.
 | 2026-08-06 | f61c9a2 | main | 0021 | Added accessibility, HTML, SEO, link, payload, and safety release gates (`tests/conformance.rs`). |
 | 2026-08-06 | ee1c13e | main | 0022 | Published crate metadata, `mkpage completions <shell>`, release workflow, and installation documentation. |
 | 2026-08-06 | 89a1c2d | main | 0023 | Dogfooded federicodelgaudio.com site migration and prepared v0.1 release candidate notes. |
+| 2026-08-06 | 0974db3 | main | adhoc | Fixed CRLF frontmatter delimiter parsing; unblocks windows-latest CI conformance test. |
 
 
 

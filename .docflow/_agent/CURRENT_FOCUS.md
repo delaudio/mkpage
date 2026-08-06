@@ -5,10 +5,11 @@
 - **Branch:** main
 - **Active item:** none.
 - **Blockers:** none.
-- **Uncommitted work:** yes.
+- **Uncommitted work:** no.
 
 ## Last shipped
 
+- 0974db3 — Fix CRLF frontmatter delimiter parsing (unblocks windows-latest CI).
 - d0abe64 — Ship semantic TUI widgets.
 - 3b2dc9b — Implement terminal-themed, responsive reference style system.
 - e46ca88 — Ship progressive keyboard enhancements.
