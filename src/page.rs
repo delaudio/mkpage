@@ -101,7 +101,12 @@ fn split_frontmatter<'a>(source: &Path, text: &'a str) -> AppResult<(PageMetadat
     if !text.starts_with("+++") {
         return Ok((PageMetadata::default(), text));
     }
-    let Some(rest) = text.strip_prefix("+++\n") else {
+    let after_start = &text[3..];
+    let rest = if let Some(r) = after_start.strip_prefix("\r\n") {
+        r
+    } else if let Some(r) = after_start.strip_prefix('\n') {
+        r
+    } else {
         return Err(diagnostic_at(
             source,
             text.as_bytes(),
@@ -111,7 +116,8 @@ fn split_frontmatter<'a>(source: &Path, text: &'a str) -> AppResult<(PageMetadat
             "malformed frontmatter delimiter".into(),
         ));
     };
-    let Some(end) = rest.find("\n+++\n") else {
+
+    let Some((header, body)) = find_closing_delimiter(rest) else {
         return Err(diagnostic_at(
             source,
             text.as_bytes(),
@@ -121,9 +127,31 @@ fn split_frontmatter<'a>(source: &Path, text: &'a str) -> AppResult<(PageMetadat
             "frontmatter is not closed".into(),
         ));
     };
-    let header = &rest[..end];
-    let body = &rest[end + "\n+++\n".len()..];
     Ok((parse_metadata(source, header)?, body))
+}
+
+fn find_closing_delimiter(rest: &str) -> Option<(&str, &str)> {
+    let mut search_idx = 0;
+    while let Some(pos) = rest[search_idx..].find("+++") {
+        let abs_pos = search_idx + pos;
+        let before = &rest[..abs_pos];
+        let is_start_of_line = abs_pos == 0 || before.ends_with('\n');
+        if is_start_of_line {
+            let after = &rest[abs_pos + 3..];
+            if let Some(rem) = after.strip_prefix("\r\n") {
+                let header = before.strip_suffix('\r').unwrap_or(before);
+                return Some((header, rem));
+            } else if let Some(rem) = after.strip_prefix('\n') {
+                let header = before.strip_suffix('\r').unwrap_or(before);
+                return Some((header, rem));
+            } else if after.is_empty() {
+                let header = before.strip_suffix('\r').unwrap_or(before);
+                return Some((header, ""));
+            }
+        }
+        search_idx = abs_pos + 3;
+    }
+    None
 }
 
 fn parse_metadata(source: &Path, header: &str) -> AppResult<PageMetadata> {

@@ -42,6 +42,17 @@ accent = "green"
 }
 
 #[test]
+fn crlf_frontmatter_is_parsed_correctly() {
+    let page = parse(
+        "content/crlf.md".as_ref(),
+        b"+++\r\ntitle = \"CRLF Test\"\r\ndraft = false\r\n+++\r\n# Hello CRLF\r\n",
+    )
+    .unwrap();
+    assert_eq!(page.metadata.title.as_deref(), Some("CRLF Test"));
+    assert_eq!(page.body, "# Hello CRLF\r\n");
+}
+
+#[test]
 fn malformed_and_unknown_frontmatter_are_source_aware() {
     let error = parse("content/about.md".as_ref(), b"+++\ntitl = 1\n+++\nbody").unwrap_err();
     assert!(matches!(error, AppError::Frontmatter { .. }));
