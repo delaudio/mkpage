@@ -1,8 +1,8 @@
 # mkpage
 
-Build terminal-minded sites, ship the web.
+Build TUI like sites, ship the web.
 
-mkpage is a Rust static-site generator that compiles Markdown and declarative
+mkpage is a static site generator that compiles Markdown and declarative
 layouts into semantic, accessible HTML and CSS with optional keyboard-first
 enhancement.
 
